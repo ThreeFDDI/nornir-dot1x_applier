@@ -1,6 +1,6 @@
 #!/usr/local/bin/python3
 '''
-This script is to create a report on switches with dot1x enabled
+This script is to apply dot1x config to Catalyst switch stacks
 '''
 
 from nornir import InitNornir
@@ -14,23 +14,31 @@ from ttp import ttp
 # Get interfaces
 def get_interfaces(task):
 
-    print(f'{task.host}: checking dot1x status.')
-    # run "show dot1x all" on each host
-    sh_dot1x = task.run(
+    # get interfaces; use TextFSM
+    interfaces = nr.run(
         task=netmiko_send_command,
-        command_string="show dot1x all",
+        command_string="show interface switchport",
+        use_textfsm=True,
     )
 
-    # TTP template for dot1x status
-    dot1x_ttp_template = "Sysauthcontrol              {{ status }}"
 
-    # magic TTP parsing
-    parser = ttp(data=sh_dot1x.result, template=dot1x_ttp_template)
-    parser.parse()
-    dot1x_status = json.loads(parser.result(format='json')[0])
-
-    print(f"{task.host}: {dot1x_status[0]['status']}")
-    return dot1x_status[0]['status']
+#    print(f'{task.host}: checking dot1x status.')
+#    # run "show dot1x all" on each host
+#    sh_dot1x = task.run(
+#        task=netmiko_send_command,
+#        command_string="show dot1x all",
+#    )
+#
+#    # TTP template for dot1x status
+#    dot1x_ttp_template = "Sysauthcontrol              {{ status }}"
+#
+#    # magic TTP parsing
+#    parser = ttp(data=sh_dot1x.result, template=dot1x_ttp_template)
+#    parser.parse()
+#    dot1x_status = json.loads(parser.result(format='json')[0])
+#
+#    print(f"{task.host}: {dot1x_status[0]['status']}")
+#    return dot1x_status[0]['status']
 
 
 # Apply global dot1x config template
