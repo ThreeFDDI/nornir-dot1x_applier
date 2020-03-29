@@ -15,12 +15,13 @@ from ttp import ttp
 def get_interfaces(task):
 
     # get interfaces; use TextFSM
-    interfaces = nr.run(
+    interfaces = task.run(
         task=netmiko_send_command,
         command_string="show interface switchport",
         use_textfsm=True,
     )
 
+    print(interfaces.result)
 
 #    print(f'{task.host}: checking dot1x status.')
 #    # run "show dot1x all" on each host
