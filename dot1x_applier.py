@@ -58,7 +58,7 @@ def main():
     # filter The Norn
     nr = nr.filter(platform="cisco_ios")
     # run The Norn to get interfaces
-    nr.run(task=get_interfaces)
+    #nr.run(task=get_interfaces)
     # run The Norn to apply global dot1x config
     nr.run(task=apply_global_dot1x)
     # run The Norn to apply interface dot1x config
