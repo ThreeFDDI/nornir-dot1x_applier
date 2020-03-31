@@ -12,7 +12,21 @@ from ttp import ttp
 
 
 # Get interfaces
-def get_interfaces(task):
+def get_info(task):
+
+    # run "show version" on each host
+    sh_version = task.run(
+        task=netmiko_send_command,
+        command_string="show version",
+        use_textfsm=True,
+    )
+
+    # save show version output to task.host
+    task.host['sh_version'] = sh_version.result[0]
+
+    # pull model from show version
+    sw_model = task.host['sh_version']['hardware'][0].split("-")
+    task.host['sw_model'] = sw_model[1]
 
     # get interfaces; use TextFSM
     interfaces = task.run(
@@ -21,7 +35,8 @@ def get_interfaces(task):
         use_textfsm=True,
     )
 
-    print(interfaces.result)
+    task.host['interfaces'] = interfaces.result
+
 
 #    print(f'{task.host}: checking dot1x status.')
 #    # run "show dot1x all" on each host
@@ -58,7 +73,7 @@ def main():
     # filter The Norn
     nr = nr.filter(platform="cisco_ios")
     # run The Norn to get interfaces
-    #nr.run(task=get_interfaces)
+    #nr.run(task=get_info)
     # run The Norn to apply global dot1x config
     nr.run(task=apply_global_dot1x)
     # run The Norn to apply interface dot1x config
