@@ -11,7 +11,7 @@ from pprint import pprint as pp
 from ttp import ttp
 
 
-# Get interfaces
+# Get info from switches
 def get_info(task):
 
     # run "show version" on each host
@@ -38,25 +38,6 @@ def get_info(task):
     task.host['interfaces'] = interfaces.result
 
 
-#    print(f'{task.host}: checking dot1x status.')
-#    # run "show dot1x all" on each host
-#    sh_dot1x = task.run(
-#        task=netmiko_send_command,
-#        command_string="show dot1x all",
-#    )
-#
-#    # TTP template for dot1x status
-#    dot1x_ttp_template = "Sysauthcontrol              {{ status }}"
-#
-#    # magic TTP parsing
-#    parser = ttp(data=sh_dot1x.result, template=dot1x_ttp_template)
-#    parser.parse()
-#    dot1x_status = json.loads(parser.result(format='json')[0])
-#
-#    print(f"{task.host}: {dot1x_status[0]['status']}")
-#    return dot1x_status[0]['status']
-
-
 # Apply global dot1x config template
 def apply_global_dot1x(task):
     _stuff = None
@@ -73,7 +54,7 @@ def main():
     # filter The Norn
     nr = nr.filter(platform="cisco_ios")
     # run The Norn to get interfaces
-    #nr.run(task=get_info)
+    nr.run(task=get_info)
     # run The Norn to apply global dot1x config
     nr.run(task=apply_global_dot1x)
     # run The Norn to apply interface dot1x config
