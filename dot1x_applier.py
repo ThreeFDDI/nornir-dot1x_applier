@@ -37,6 +37,10 @@ def get_info(task):
 
     task.host['interfaces'] = interfaces.result
 
+    print(task.host)
+    print(task.host['sw_model'])
+    pp(task.host['interfaces'])
+    
 
 # Apply global dot1x config template
 def apply_global_dot1x(task):
