@@ -69,7 +69,7 @@ def ibnsv1_dot1x(task):
         task=text.template_file, 
         template="IBNSv1_access_intf.j2", 
         path="./templates", 
-        **task.host
+        **task.host['interfaces']
     )
 
     print(result[0].result)
