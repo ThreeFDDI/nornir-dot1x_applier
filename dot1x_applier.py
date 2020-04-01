@@ -63,13 +63,17 @@ def ibnsv1_dot1x(task):
     print(task.host['ise_sec'])
     print(task.host['excluded_intf'])
     print(task.host['uplinks'])
-    
+
+    interfaces = {}
+    for intf in task.host['interfaces']:
+        interfaces[intf['interface']] = intf['access_vlan']
+    print(interfaces)
 
     result = task.run(
         task=text.template_file, 
         template="IBNSv1_access_intf.j2", 
-        path="./templates", 
-        **task.host['interfaces']
+        path="templates/", 
+        **task.host
     )
 
     print(result[0].result)
