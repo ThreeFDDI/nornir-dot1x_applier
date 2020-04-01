@@ -7,6 +7,7 @@ from nornir import InitNornir
 from nornir.core.filter import F
 from nornir.plugins.functions.text import print_result
 from nornir.plugins.tasks.networking import netmiko_send_command
+from nornir.plugins.tasks import text
 from pprint import pprint as pp
 from ttp import ttp
 
@@ -58,9 +59,21 @@ def apply_dot1x(task):
 def ibnsv1_dot1x(task):
 
     print(task.host['vlans'])
-    print(task.host['ise_ip'])
+    print(task.host['ise_pri'])
+    print(task.host['ise_sec'])
     print(task.host['excluded_intf'])
+    print(task.host['uplinks'])
+    
 
+    result = task.run(
+        task=text.template_file, 
+        template="IBNSv1_access_intf.j2", 
+        path="./templates", 
+        **task.host
+    )
+
+    print(result[0].result)
+    
     for intf in task.host['interfaces']:
         #print(intf['interface'])
         #print(intf['admin_mode'])
