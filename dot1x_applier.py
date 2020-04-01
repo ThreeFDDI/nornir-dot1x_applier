@@ -57,11 +57,14 @@ def apply_dot1x(task):
 # Apply IBNSv1 dot1x config template
 def ibnsv1_dot1x(task):
 
-    for intf in task.host['interfaces']:
-        print(intf['interface'])
-        print(intf['admin_mode'])
-#    pp(task.host['interfaces'])
+    print(task.host['vlans'])
+    print(task.host['ise_ip'])
+    print(task.host['excluded_intf'])
 
+    for intf in task.host['interfaces']:
+        #print(intf['interface'])
+        #print(intf['admin_mode'])
+        pass
 
 
 # Apply IBNSv2 dot1x config templates
@@ -74,7 +77,7 @@ def main():
     nr = InitNornir()
     # filter The Norn
     nr = nr.filter(platform="cisco_ios")
-    # run The Norn to get interfaces
+    # run The Norn to get info
     nr.run(task=get_info)
     # run The Norn to apply dot1x config
     nr.run(task=apply_dot1x)
