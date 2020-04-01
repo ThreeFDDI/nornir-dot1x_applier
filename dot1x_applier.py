@@ -14,7 +14,7 @@ from ttp import ttp
 # Get info from switches
 def get_info(task):
 
-    # run "show version" on each host
+    # run software version; use TextFSM
     sh_version = task.run(
         task=netmiko_send_command,
         command_string="show version",
@@ -23,9 +23,9 @@ def get_info(task):
 
     # save show version output to task.host
     task.host['sh_version'] = sh_version.result[0]
-
     # pull model from show version
     sw_model = task.host['sh_version']['hardware'][0].split("-")
+    # save model to task.host
     task.host['sw_model'] = sw_model[1]
 
     # get interfaces; use TextFSM
@@ -35,20 +35,37 @@ def get_info(task):
         use_textfsm=True,
     )
 
+    # save interfaces to task.host
     task.host['interfaces'] = interfaces.result
-
-    print(task.host)
-    print(task.host['sw_model'])
-    pp(task.host['interfaces'])
     
 
-# Apply global dot1x config template
-def apply_global_dot1x(task):
-    _stuff = None
+# Switch model decison
+def apply_dot1x(task):
+
+    # print hostname and switch model
+    print(task.host)
+    print(task.host['sw_model'])
+
+    # apply IBNS v1 or v2 based on switch model
+    if "3750" in task.host['sw_model']:
+        ibnsv1_dot1x(task)
+
+    else:
+        ibnsv2_dot1x(task)
 
 
-# Apply interface dot1x config templates
-def apply_int_dot1x(task):
+# Apply IBNSv1 dot1x config template
+def ibnsv1_dot1x(task):
+
+    for intf in task.host['interfaces']:
+        print(intf['interface'])
+        print(intf['admin_mode'])
+#    pp(task.host['interfaces'])
+
+
+
+# Apply IBNSv2 dot1x config templates
+def ibnsv2_dot1x(task):
     _stuff = None
 
 
@@ -59,10 +76,8 @@ def main():
     nr = nr.filter(platform="cisco_ios")
     # run The Norn to get interfaces
     nr.run(task=get_info)
-    # run The Norn to apply global dot1x config
-    nr.run(task=apply_global_dot1x)
-    # run The Norn to apply interface dot1x config
-    nr.run(task=apply_int_dot1x)
+    # run The Norn to apply dot1x config
+    nr.run(task=apply_dot1x)
 
 
 if __name__ == "__main__":
