@@ -15,7 +15,7 @@ from ttp import ttp
 # Get info from switches
 def get_info(task):
 
-    # run software version; use TextFSM
+    # get software version; use TextFSM
     sh_version = task.run(
         task=netmiko_send_command,
         command_string="show version",
@@ -66,8 +66,18 @@ def ibnsv1_dot1x(task):
     print(task.host['uplinks'])
 
     access_interfaces = []
+    uplink_interfaces = []
+
     for intf in task.host['intfs']:
-        if intf['interface']  in task.host['excluded_intf']:
+
+        if intf['interface'] in task.host['uplinks']:
+            uplink_interfaces.append({'interface': intf['interface']})
+
+        elif intf['interface'] not in task.host['excluded_intf']:
+            continue
+
+        elif intf['interface'] in task.host['excluded_intf']:
+
             access_interfaces.append(
                 {
                     'interface': intf['interface'],
@@ -84,13 +94,8 @@ def ibnsv1_dot1x(task):
         **task.host
     )
 
-
+    print(uplink_interfaces)
     print(task.host['access_intf_cfg'].result)
-    
-    for intf in task.host['interfaces']:
-        #print(intf['interface'])
-        #print(intf['admin_mode'])
-        pass
 
 
 # Apply IBNSv2 dot1x config templates
