@@ -47,17 +47,20 @@ def apply_dot1x(task):
     print(task.host)
     print(task.host['sw_model'])
 
-    # apply IBNS v1 or v2 based on switch model
+    # choose template based on switch model
     if "3750" in task.host['sw_model']:
+        # 3750's use IBNSv1
         ibnsv1_dot1x(task)
 
     else:
+        # all other switches use IBNSv2
         ibnsv2_dot1x(task)
 
 
 # Apply IBNSv1 dot1x config template
 def ibnsv1_dot1x(task):
 
+    # testing prints
     print(task.host['ise_key'])
     print(task.host['vlans'])
     print(task.host['ise_pri'])
