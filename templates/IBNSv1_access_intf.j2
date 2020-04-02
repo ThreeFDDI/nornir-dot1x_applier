@@ -1,4 +1,4 @@
-{% for intf in interfaces %}
+{% for intf in access_interfaces %}
 interface {{ intf.interface }}
  authentication event fail action next-method
  authentication event server dead action authorize vlan {{ intf.access_vlan }}

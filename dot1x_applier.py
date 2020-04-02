@@ -37,7 +37,7 @@ def get_info(task):
     )
 
     # save interfaces to task.host
-    task.host['interfaces'] = interfaces.result
+    task.host['intfs'] = interfaces.result
     
 
 # Switch model decison
@@ -65,10 +65,17 @@ def ibnsv1_dot1x(task):
     print(task.host['excluded_intf'])
     print(task.host['uplinks'])
 
-    interfaces = {}
-    for intf in task.host['interfaces']:
-        interfaces[intf['interface']] = intf['access_vlan']
-    #print(interfaces)
+    access_interfaces = []
+    for intf in task.host['intfs']:
+        if intf['interface']  in task.host['excluded_intf']:
+            access_interfaces.append(
+                {
+                    'interface': intf['interface'],
+                    'access_vlan': intf['access_vlan']
+                }
+            )
+
+    task.host['access_interfaces'] = access_interfaces
 
     task.host['access_intf_cfg'] = task.run(
         task=text.template_file, 
@@ -76,6 +83,7 @@ def ibnsv1_dot1x(task):
         path="templates/", 
         **task.host
     )
+
 
     print(task.host['access_intf_cfg'].result)
     
