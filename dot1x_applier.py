@@ -103,6 +103,7 @@ def ibnsv2_dot1x(task):
     _stuff = None
 
 
+# Main function
 def main():
     # initialize The Norn
     nr = InitNornir()
