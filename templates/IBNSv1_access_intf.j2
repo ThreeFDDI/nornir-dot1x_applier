@@ -1,9 +1,7 @@
-# IBNSv1 access interface template
-
-{% for interface, access_vlan in interfaces.items() %}
-interface {{ interface }}
+{% for intf in interfaces %}
+interface {{ intf.interface }}
  authentication event fail action next-method
- authentication event server dead action authorize vlan {{ access_vlan }}
+ authentication event server dead action authorize vlan {{ intf.access_vlan }}
  authentication event server dead action authorize voice
  authentication event server alive action reinitialize 
  authentication host-mode multi-auth
@@ -23,4 +21,5 @@ interface {{ interface }}
  no switchport port-security
  no switchport port-security aging time 
  no switchport port-security aging type 
+!
 {% endfor %}

@@ -58,6 +58,7 @@ def apply_dot1x(task):
 # Apply IBNSv1 dot1x config template
 def ibnsv1_dot1x(task):
 
+    print(task.host['ise_key'])
     print(task.host['vlans'])
     print(task.host['ise_pri'])
     print(task.host['ise_sec'])
@@ -67,16 +68,16 @@ def ibnsv1_dot1x(task):
     interfaces = {}
     for intf in task.host['interfaces']:
         interfaces[intf['interface']] = intf['access_vlan']
-    print(interfaces)
+    #print(interfaces)
 
-    result = task.run(
+    task.host['access_intf_cfg'] = task.run(
         task=text.template_file, 
         template="IBNSv1_access_intf.j2", 
         path="templates/", 
         **task.host
     )
 
-    print(result[0].result)
+    print(task.host['access_intf_cfg'].result)
     
     for intf in task.host['interfaces']:
         #print(intf['interface'])
