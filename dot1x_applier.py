@@ -77,7 +77,7 @@ def ibnsv1_dot1x(task):
 
         # uplinks
         if intf['interface'] in task.host['uplinks']:
-            uplink_interfaces.append({'interface': intf['interface']})
+            uplink_interfaces.append(intf['interface'])
 
         # other non-excluded access ports 
         elif intf['interface'] not in task.host['excluded_intf']:
@@ -92,6 +92,14 @@ def ibnsv1_dot1x(task):
                 }
             )
 
+    task.host['uplink_interfaces'] = uplink_interfaces
+
+    task.host['uplink_intf_cfg'] = task.run(
+        task=text.template_file, 
+        template="IBNS_uplink_intf.j2", 
+        path="templates/", 
+        **task.host
+    )
     task.host['access_interfaces'] = access_interfaces
 
     task.host['access_intf_cfg'] = task.run(
@@ -102,6 +110,7 @@ def ibnsv1_dot1x(task):
     )
 
     print(uplink_interfaces)
+    print(task.host['uplink_intf_cfg'].result)
     print(task.host['access_intf_cfg'].result)
 
 

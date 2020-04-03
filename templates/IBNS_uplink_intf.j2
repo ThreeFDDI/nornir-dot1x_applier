@@ -1,0 +1,5 @@
+{% for intf in uplink_interfaces %}
+interface {{ intf }}
+ ip dhcp snooping
+ !
+{% endfor %}
