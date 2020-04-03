@@ -68,14 +68,18 @@ def ibnsv1_dot1x(task):
     print(task.host['excluded_intf'])
     print(task.host['uplinks'])
 
+    # init lists of interfaces
     access_interfaces = []
     uplink_interfaces = []
 
+    # iterate over all interfaces 
     for intf in task.host['intfs']:
 
+        # uplinks
         if intf['interface'] in task.host['uplinks']:
             uplink_interfaces.append({'interface': intf['interface']})
 
+        # other non-excluded access ports 
         elif intf['interface'] not in task.host['excluded_intf']:
             continue
 
