@@ -46,7 +46,7 @@ def ibns_global(version, vlan_list):
 
 
 # render IBNS interface configs
-def ibns_intf(version, intfs, vlans, uplinks, access_intfs):
+def ibns_intf(version, intfs, vlans, uplinks, excluded_intfs):
     _stuff = None
 
 
@@ -70,14 +70,6 @@ def render_configs(task):
 # Apply IBNSv1 dot1x config template
 def ibnsv1_dot1x(task):
 
-    # testing prints
-    print(task.host['ise_key'])
-    print(task.host['vlans'])
-    print(task.host['ise_pri'])
-    print(task.host['ise_sec'])
-    print(task.host['excluded_intf'])
-    print(task.host['uplinks'])
-
     # init lists of interfaces
     access_interfaces = []
     uplink_interfaces = []
@@ -85,43 +77,33 @@ def ibnsv1_dot1x(task):
     # iterate over all interfaces 
     for intf in task.host['intfs']:
 
-        # uplinks
+        # uplink interfaces
         if intf['interface'] in task.host['uplinks']:
-            uplink_interfaces.append(intf['interface'])
+            uplink_interfaces.append(intf)
 
         # other non-excluded access ports 
         elif intf['interface'] not in task.host['excluded_intf']:
-            continue
-
-        elif intf['interface'] in task.host['excluded_intf']:
-
-            access_interfaces.append(
-                {
-                    'interface': intf['interface'],
-                    'access_vlan': intf['access_vlan']
-                }
-            )
+            access_interfaces.append(intf)
 
     task.host['uplink_interfaces'] = uplink_interfaces
 
-    task.host['uplink_intf_cfg'] = task.run(
+    uplink_intf_cfg = task.run(
         task=text.template_file, 
         template="IBNS_uplink_intf.j2", 
         path="templates/", 
         **task.host
     )
+    
     task.host['access_interfaces'] = access_interfaces
 
-    task.host['access_intf_cfg'] = task.run(
+    access_intf_cfg = task.run(
         task=text.template_file, 
         template="IBNSv1_access_intf.j2", 
         path="templates/", 
         **task.host
     )
 
-    print(uplink_interfaces)
-    print(task.host['uplink_intf_cfg'].result)
-    print(task.host['access_intf_cfg'].result)
+    print(uplink_intf_cfg.result + access_intf_cfg.result)
 
 
 # Main function
