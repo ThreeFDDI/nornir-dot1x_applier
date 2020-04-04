@@ -40,8 +40,18 @@ def get_info(task):
     task.host['intfs'] = interfaces.result
     
 
-# Switch model decison
-def apply_dot1x(task):
+# render IBNS global configs
+def ibns_global(version, vlan_list):
+    _stuff = None
+
+
+# render IBNS interface configs
+def ibns_intf(version, intfs, vlans, uplinks, access_intfs):
+    _stuff = None
+
+
+# render switch configs
+def render_configs(task):
 
     # print hostname and switch model
     print(task.host)
@@ -114,11 +124,6 @@ def ibnsv1_dot1x(task):
     print(task.host['access_intf_cfg'].result)
 
 
-# Apply IBNSv2 dot1x config templates
-def ibnsv2_dot1x(task):
-    _stuff = None
-
-
 # Main function
 def main():
     # initialize The Norn
@@ -128,7 +133,7 @@ def main():
     # run The Norn to get info
     nr.run(task=get_info)
     # run The Norn to apply dot1x config
-    nr.run(task=apply_dot1x)
+    nr.run(task=render_configs)
 
 
 if __name__ == "__main__":
