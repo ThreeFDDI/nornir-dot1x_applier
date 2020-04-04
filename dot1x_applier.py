@@ -4,12 +4,10 @@ This script is to apply dot1x config to Catalyst switch stacks
 '''
 
 from nornir import InitNornir
-from nornir.core.filter import F
-from nornir.plugins.functions.text import print_result
 from nornir.plugins.tasks.networking import netmiko_send_command
+from nornir.plugins.tasks.networking import netmiko_send_config
 from nornir.plugins.tasks import text
 from pprint import pprint as pp
-from ttp import ttp
 
 
 # Get info from switches
@@ -41,48 +39,26 @@ def get_info(task):
     
 
 # render IBNS global configs
-def ibns_global(version, vlan_list):
+def ibns_global(task, version, vlan_list):
     _stuff = None
 
 
 # render IBNS interface configs
-def ibns_intf(version, intfs, vlans, uplinks, excluded_intfs):
-    _stuff = None
-
-
-# render switch configs
-def render_configs(task):
-
-    # print hostname and switch model
-    print(task.host)
-    print(task.host['sw_model'])
-
-    # choose template based on switch model
-    if "3750" in task.host['sw_model']:
-        # 3750's use IBNSv1
-        ibnsv1_dot1x(task)
-
-    else:
-        # all other switches use IBNSv2
-        ibnsv2_dot1x(task)
-
-
-# Apply IBNSv1 dot1x config template
-def ibnsv1_dot1x(task):
-
+def ibns_intf(task, ibns_ver, intfs, vlans, uplinks, excluded_intf):
+    
     # init lists of interfaces
     access_interfaces = []
     uplink_interfaces = []
 
     # iterate over all interfaces 
-    for intf in task.host['intfs']:
+    for intf in intfs:
 
         # uplink interfaces
-        if intf['interface'] in task.host['uplinks']:
+        if intf['interface'] in uplinks:
             uplink_interfaces.append(intf)
 
         # other non-excluded access ports 
-        elif intf['interface'] not in task.host['excluded_intf']:
+        elif intf['interface'] not in excluded_intf:
             access_interfaces.append(intf)
 
     task.host['uplink_interfaces'] = uplink_interfaces
@@ -98,12 +74,33 @@ def ibnsv1_dot1x(task):
 
     access_intf_cfg = task.run(
         task=text.template_file, 
-        template="IBNSv1_access_intf.j2", 
+        template=f"IBNS{ibns_ver}_access_intf.j2", 
         path="templates/", 
         **task.host
     )
 
     print(uplink_intf_cfg.result + access_intf_cfg.result)
+
+
+# render switch configs
+def render_configs(task):
+
+    # choose template based on switch model
+    if "3750" in task.host['sw_model']:
+        # 3750's use IBNSv1
+        ibns_ver = 'v1'
+    else:
+        # all else use IBNSv2
+        ibns_ver = 'v2'
+
+    ibns_intf(
+        task,
+        ibns_ver,
+        task.host['intfs'],
+        task.host['vlans'],
+        task.host['uplinks'],
+        task.host['excluded_intf']
+    )
 
 
 # Main function
