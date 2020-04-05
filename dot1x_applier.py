@@ -7,7 +7,6 @@ from nornir import InitNornir
 from nornir.plugins.tasks.networking import netmiko_send_command
 from nornir.plugins.tasks.networking import netmiko_send_config
 from nornir.plugins.tasks import text
-from pprint import pprint as pp
 
 
 # Get info from switches
