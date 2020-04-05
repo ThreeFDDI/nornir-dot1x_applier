@@ -1,0 +1,21 @@
+aaa group server radius ISE
+ server 10.10.9.1 auth-port 1812 acct-port 1813 <refer to table above>
+ server 10.10.9.17 auth-port 1812 acct-port 1813 <refer to table above>
+ radius-server key {{ ise_key }}
+ ip radius source-interface 777
+aaa authentication dot1x default group ISE
+aaa authorization network default group ISE
+aaa accounting dot1x default start-stop group ISE
+aaa server radius dynamic-author
+ client 10.10.8.6 server-key 0 {{ ise_key }}
+ client 10.10.8.7 server-key 0 {{ ise_key }}
+ client 10.10.8.68 server-key 0 {{ ise_key }}
+ client 10.10.8.69 server-key 0 {{ ise_key }}
+ client 10.10.9.1 server-key 0 {{ ise_key }}
+ client 10.10.9.17 server-key 0 {{ ise_key }}
+ip device tracking
+ip dhcp snooping
+no ip dhcp snooping information option
+ip dhcp snooping vlan {{ vlans }}
+dot1x system-auth-control
+dot1x critical eapol

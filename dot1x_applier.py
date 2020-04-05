@@ -39,8 +39,16 @@ def get_info(task):
     
 
 # render IBNS global configs
-def ibns_global(task, version, vlan_list):
+def ibns_global(task, ibns_ver, vlans):
     _stuff = None
+    global_cfg = task.run(
+        task=text.template_file, 
+        template=f"IBNS{ibns_ver}_global.j2", 
+        path="templates/", 
+        **task.host
+    )
+
+    print(global_cfg.result)
 
 
 # render IBNS interface configs
@@ -93,6 +101,12 @@ def render_configs(task):
         # all else use IBNSv2
         ibns_ver = 'v2'
 
+    ibns_global(
+        task,
+        ibns_ver,
+        task.host['vlans'],
+    )
+    
     ibns_intf(
         task,
         ibns_ver,
