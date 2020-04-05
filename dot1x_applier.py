@@ -39,7 +39,7 @@ def get_info(task):
     
 
 # render IBNS global configs
-def ibns_global(task, ibns_ver, vlans):
+def ibns_global(task, ibns_ver):
     global_cfg = task.run(
         task=text.template_file, 
         template=f"IBNS{ibns_ver}_global.j2", 
@@ -51,27 +51,22 @@ def ibns_global(task, ibns_ver, vlans):
 
 
 # render IBNS interface configs
-def ibns_intf(task, ibns_ver, intfs, vlans, uplinks, excluded_intf):
+def ibns_intf(task, ibns_ver):
     
     # init lists of interfaces
     access_interfaces = []
     uplink_interfaces = []
 
-    print(type(vlans))
-    for v in vlans:
-        print(type(v))
-        print(v)
-
     # iterate over all interfaces 
-    for intf in intfs:
+    for intf in task.host['intfs']:
 
         # uplink interfaces
-        if intf['interface'] in uplinks:
+        if intf['interface'] in task.host['uplinks']:
             uplink_interfaces.append(intf)
 
         # other non-excluded access ports 
-        elif intf['interface'] not in excluded_intf:
-            if intf['access_vlan'] in vlans:
+        elif intf['interface'] not in task.host['excluded_intf']:
+            if intf['access_vlan'] in task.host['vlans']:
                 access_interfaces.append(intf)
 
     task.host['uplink_interfaces'] = uplink_interfaces
@@ -98,6 +93,16 @@ def ibns_intf(task, ibns_ver, intfs, vlans, uplinks, excluded_intf):
 # render switch configs
 def render_configs(task):
 
+    # convert vlans in inventory from int to str
+    vlans = []
+    for vlan in task.host['vlans']:
+        vlans.append(str(vlan))
+    # save list of vlans strings back to task.host
+    task.host['vlans'] = vlans
+
+    # create vlan_list string
+    task.host['vlan_list'] = ",".join(task.host['vlans'])
+
     # choose template based on switch model
     if "3750" in task.host['sw_model']:
         # 3750's use IBNSv1
@@ -106,19 +111,16 @@ def render_configs(task):
         # all else use IBNSv2
         ibns_ver = 'v2'
 
+    # function to render global configs
     ibns_global(
         task,
         ibns_ver,
-        task.host['vlans'],
     )
 
+    # function to run interface configs
     ibns_intf(
         task,
         ibns_ver,
-        task.host['intfs'],
-        task.host['vlans'],
-        task.host['uplinks'],
-        task.host['excluded_intf']
     )
 
 
