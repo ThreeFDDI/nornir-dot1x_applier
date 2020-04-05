@@ -46,7 +46,7 @@ def ibns_global(task, ibns_ver):
         **task.host
     )
 
-    print(global_cfg.result)
+    return global_cfg.result
 
 
 # IBNS interface config templates
@@ -68,17 +68,19 @@ def ibns_intf(task, ibns_ver):
             if intf['access_vlan'] in task.host['vlans']:
                 access_interfaces.append(intf)
 
+    # assign uplink interface list to task.host
     task.host['uplink_interfaces'] = uplink_interfaces
-
+    # render uplink interface configs
     uplink_intf_cfg = task.run(
         task=text.template_file, 
         template="IBNS_uplink_intf.j2", 
         path="templates/", 
         **task.host
     )
-    
-    task.host['access_interfaces'] = access_interfaces
 
+    # assign access interface list to task.host
+    task.host['access_interfaces'] = access_interfaces
+    # render access interface configs
     access_intf_cfg = task.run(
         task=text.template_file, 
         template=f"IBNS{ibns_ver}_access_intf.j2", 
@@ -86,7 +88,7 @@ def ibns_intf(task, ibns_ver):
         **task.host
     )
 
-    print(uplink_intf_cfg.result + access_intf_cfg.result)
+    return uplink_intf_cfg.result + access_intf_cfg.result
 
 
 # render switch configs
@@ -111,17 +113,18 @@ def render_configs(task):
         ibns_ver = 'v2'
 
     # function to render global configs
-    ibns_global(
+    global_cfg = ibns_global(
         task,
         ibns_ver,
     )
 
     # function to run interface configs
-    ibns_intf(
+    intf_cfg = ibns_intf(
         task,
         ibns_ver,
     )
 
+    print(global_cfg + intf_cfg)
 
 # apply switch configs
 def apply_configs(task):
