@@ -126,6 +126,7 @@ def render_configs(task):
 
     print(global_cfg + intf_cfg)
 
+
 # apply switch configs
 def apply_configs(task):
     _stuff = None
