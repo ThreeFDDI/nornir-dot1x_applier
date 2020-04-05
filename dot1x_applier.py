@@ -38,7 +38,7 @@ def get_info(task):
     task.host['intfs'] = interfaces.result
     
 
-# render IBNS global configs
+# IBNS global config templates
 def ibns_global(task, ibns_ver):
     global_cfg = task.run(
         task=text.template_file, 
@@ -50,7 +50,7 @@ def ibns_global(task, ibns_ver):
     print(global_cfg.result)
 
 
-# render IBNS interface configs
+# IBNS interface config templates
 def ibns_intf(task, ibns_ver):
     
     # init lists of interfaces
@@ -124,7 +124,12 @@ def render_configs(task):
     )
 
 
-# Main function
+# apply switch configs
+def apply_configs(task):
+    _stuff = None
+
+
+# main function
 def main():
     # initialize The Norn
     nr = InitNornir()
