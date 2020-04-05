@@ -40,7 +40,6 @@ def get_info(task):
 
 # render IBNS global configs
 def ibns_global(task, ibns_ver, vlans):
-    _stuff = None
     global_cfg = task.run(
         task=text.template_file, 
         template=f"IBNS{ibns_ver}_global.j2", 
@@ -58,6 +57,11 @@ def ibns_intf(task, ibns_ver, intfs, vlans, uplinks, excluded_intf):
     access_interfaces = []
     uplink_interfaces = []
 
+    print(type(vlans))
+    for v in vlans:
+        print(type(v))
+        print(v)
+
     # iterate over all interfaces 
     for intf in intfs:
 
@@ -67,7 +71,8 @@ def ibns_intf(task, ibns_ver, intfs, vlans, uplinks, excluded_intf):
 
         # other non-excluded access ports 
         elif intf['interface'] not in excluded_intf:
-            access_interfaces.append(intf)
+            if intf['access_vlan'] in vlans:
+                access_interfaces.append(intf)
 
     task.host['uplink_interfaces'] = uplink_interfaces
 
@@ -106,7 +111,7 @@ def render_configs(task):
         ibns_ver,
         task.host['vlans'],
     )
-    
+
     ibns_intf(
         task,
         ibns_ver,
