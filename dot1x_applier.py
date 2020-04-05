@@ -36,7 +36,7 @@ def get_info(task):
     # save interfaces to task.host
     task.host['intfs'] = interfaces.result
     
-
+    
 # IBNS global config templates
 def ibns_global(task, ibns_ver):
     global_cfg = task.run(
@@ -45,7 +45,7 @@ def ibns_global(task, ibns_ver):
         path="templates/", 
         **task.host
     )
-
+    # return configuration
     return global_cfg.result
 
 
@@ -87,7 +87,7 @@ def ibns_intf(task, ibns_ver):
         path="templates/", 
         **task.host
     )
-
+    # return configuration
     return uplink_intf_cfg.result + access_intf_cfg.result
 
 
