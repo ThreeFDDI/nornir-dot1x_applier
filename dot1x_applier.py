@@ -124,7 +124,7 @@ def render_configs(task):
         ibns_ver,
     )
 
-    print(global_cfg + intf_cfg)
+    print(global_cfg + "\n" + intf_cfg)
 
 
 # apply switch configs
