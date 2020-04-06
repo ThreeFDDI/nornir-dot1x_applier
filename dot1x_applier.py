@@ -41,7 +41,7 @@ def get_info(task):
 def ibns_global(task, ibns_ver):
     global_cfg = task.run(
         task=text.template_file, 
-        template=f"IBNS{ibns_ver}_global.j2", 
+        template=f"IBNS{ibns_ver}_{task.host['region']}_global.j2", 
         path="templates/", 
         **task.host
     )
@@ -129,6 +129,7 @@ def render_configs(task):
 
 # apply switch configs
 def apply_configs(task):
+    print(task.host['region'])
     print(task.host['ise_vip_a_name'])
     print(task.host['ise_vip_a_ip'])
     print(task.host['ise_vip_a_psn1'])

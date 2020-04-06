@@ -1,6 +1,6 @@
 aaa group server radius ISE
- server 10.10.9.1 auth-port 1812 acct-port 1813
- server 10.10.9.17 auth-port 1812 acct-port 1813
+ server {{ ise_vip_b_ip }} auth-port 1812 acct-port 1813
+ server {{ ise_vip_a_ip }} auth-port 1812 acct-port 1813
  radius-server key {{ ise_key }}
  ip radius source-interface 777
 !
@@ -9,12 +9,12 @@ aaa authorization network default group ISE
 aaa accounting dot1x default start-stop group ISE
 !
 aaa server radius dynamic-author
- client 10.10.8.6 server-key 0 {{ ise_key }}
- client 10.10.8.7 server-key 0 {{ ise_key }}
- client 10.10.8.68 server-key 0 {{ ise_key }}
- client 10.10.8.69 server-key 0 {{ ise_key }}
- client 10.10.9.1 server-key 0 {{ ise_key }}
- client 10.10.9.17 server-key 0 {{ ise_key }}
+ client {{ ise_vip_b_ip }} server-key 0 {{ ise_key }}
+ client {{ ise_vip_b_psn1 }} server-key 0 {{ ise_key }}
+ client {{ ise_vip_b_psn2 }} server-key 0 {{ ise_key }}
+ client {{ ise_vip_a_ip }} server-key 0 {{ ise_key }}
+ client {{ ise_vip_a_psn1 }} server-key 0 {{ ise_key }}
+ client {{ ise_vip_a_psn2 }} server-key 0 {{ ise_key }}
 !
 ip device tracking
 ip dhcp snooping
@@ -35,8 +35,8 @@ radius-server attribute 6 support-multiple
 radius-server attribute 8 include-in-access-req
 radius-server attribute 25 access-request include
 radius-server dead-criteria time 5 tries 3
-radius-server host 10.10.9.xx auth-port 1812 acct-port 1813 test username SVC_RADIUS_P key 0 {{ ise_key }}
-radius-server host 10.10.9.xx auth-port 1812 acct-port 1813 test username SVC_RADIUS_P key 0 {{ ise_key }}
+radius-server host {{ ise_vip_b_ip }} auth-port 1812 acct-port 1813 test username SVC_RADIUS_P key 0 {{ ise_key }}
+radius-server host {{ ise_vip_a_ip }} auth-port 1812 acct-port 1813 test username SVC_RADIUS_P key 0 {{ ise_key }}
 radius-server deadtime 15
 radius-server vsa send accounting
 radius-server vsa send authentication
