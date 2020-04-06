@@ -3,9 +3,11 @@ aaa group server radius ISE
  server 10.10.9.17 auth-port 1812 acct-port 1813
  radius-server key {{ ise_key }}
  ip radius source-interface 777
+!
 aaa authentication dot1x default group ISE
 aaa authorization network default group ISE
 aaa accounting dot1x default start-stop group ISE
+!
 aaa server radius dynamic-author
  client 10.10.8.6 server-key 0 {{ ise_key }}
  client 10.10.8.7 server-key 0 {{ ise_key }}
@@ -13,10 +15,29 @@ aaa server radius dynamic-author
  client 10.10.8.69 server-key 0 {{ ise_key }}
  client 10.10.9.1 server-key 0 {{ ise_key }}
  client 10.10.9.17 server-key 0 {{ ise_key }}
+!
 ip device tracking
 ip dhcp snooping
 no ip dhcp snooping information option
 ip dhcp snooping vlan {{ vlan_list }}
+!
 dot1x system-auth-control
 dot1x critical eapol
+!
+ip http secure-active-session-modules none
+ip http max-connections 20
+ip http active-session-modules none
+ip http client source-interface 777
+ip radius source-interface 777 vrf default
+!
+radius-server attribute 6 on-for-login-auth
+radius-server attribute 6 support-multiple
+radius-server attribute 8 include-in-access-req
+radius-server attribute 25 access-request include
+radius-server dead-criteria time 5 tries 3
+radius-server host 10.10.9.xx auth-port 1812 acct-port 1813 test username SVC_RADIUS_P key 0 {{ ise_key }}
+radius-server host 10.10.9.xx auth-port 1812 acct-port 1813 test username SVC_RADIUS_P key 0 {{ ise_key }}
+radius-server deadtime 15
+radius-server vsa send accounting
+radius-server vsa send authentication
 !
