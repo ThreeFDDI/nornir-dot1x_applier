@@ -36,7 +36,7 @@ def get_info(task):
     # save interfaces to task.host
     task.host['intfs'] = interfaces.result
     
-    
+
 # IBNS global config templates
 def ibns_global(task, ibns_ver):
     global_cfg = task.run(
@@ -129,7 +129,14 @@ def render_configs(task):
 
 # apply switch configs
 def apply_configs(task):
-    _stuff = None
+    print(task.host['ise_vip_a_name'])
+    print(task.host['ise_vip_a_ip'])
+    print(task.host['ise_vip_a_psn1'])
+    print(task.host['ise_vip_a_psn2'])
+    print(task.host['ise_vip_b_name'])
+    print(task.host['ise_vip_b_ip'])
+    print(task.host['ise_vip_b_psn1'])
+    print(task.host['ise_vip_b_psn2'])
 
 
 # main function
@@ -142,6 +149,8 @@ def main():
     nr.run(task=get_info)
     # run The Norn to apply dot1x config
     nr.run(task=render_configs)
+
+    nr.run(task=apply_configs)
 
 
 if __name__ == "__main__":
