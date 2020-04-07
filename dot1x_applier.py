@@ -183,8 +183,6 @@ def render_configs(task):
     print('~'*80)    
 
 
-
-
 # apply switch configs
 def apply_configs(task):
     # print banner
