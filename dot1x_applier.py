@@ -47,15 +47,13 @@ def nornir_set_creds(norn, username=None, password=None):
     print()
     print('~'*80)
     c_print('Checking inventory for credentials')
-
+    # check for existing credentials in inventory
     for host_obj in norn.inventory.hosts.values():
-        
+        # set username and password if empty
         if not host_obj.username:
             c_print('Please enter device credentials:')
-            username = input("Username: ")
-            host_obj.username = username
-            password = getpass()
-            host_obj.password = password
+            host_obj.username = input("Username: ")
+            host_obj.password = getpass()
             print()
 
     print('~'*80)
@@ -199,6 +197,7 @@ def apply_configs(task):
     print('~'*80)    
 
 
+# verify dot1x 
 def verify_dot1x(task):
     # print banner
     c_print(f"Verifying IBNS{task.host['ibns_ver']} configuration of devices")
@@ -221,16 +220,14 @@ def verify_dot1x(task):
     print('~'*80)    
 
 
+# save switch configs
 def save_configs(task):
     # print banner
     c_print(f"Saving IBNS{task.host['ibns_ver']} configurations on all devices")
     # run "show dot1x all" on each host
     task.run(task=netmiko_save_config)
     c_print(f"*** {task.host}: configuration saved ***")
-
     print('~'*80)    
-
-
 
 
 # main function

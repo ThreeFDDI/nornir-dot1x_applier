@@ -1,4 +1,5 @@
 hosts.yaml
 defaults.yaml
 groups.yaml
-configs/*.txt
+configs/*dot1x.txt
+output/*verified.txt
