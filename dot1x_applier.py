@@ -261,14 +261,13 @@ def main():
     nr.run(task=verify_dot1x)
     print('~'*80)
 
-    # print banner
+    # save dot1x configs
     c_print(f"Saving IBNS dot1x configurations on all devices")
     # prompt to proceed
     proceed()
     # run The Norn to save configurations
     nr.run(task=save_configs)
     c_print(f'Failed hosts: {nr.data.failed_hosts}')
-
     print('~'*80)
 
 
