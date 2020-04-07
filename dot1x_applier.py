@@ -49,9 +49,9 @@ def proceed():
     confirm = input(" "*37 + '(y/n) ')
     # quit script if not confirmed
     if confirm.lower() == 'y':
-        c_print("********** CONTINUING SCRIPT **********")
+        c_print("****** CONTINUING SCRIPT ******")
     else:
-        c_print("********** EXITING SCRIPT **********")
+        c_print("******* EXITING SCRIPT ********")
         print('~'*80)    
         try:
             sys.exit()
@@ -245,6 +245,8 @@ def verify_dot1x(task):
 def save_configs(task):
     # print banner
     c_print(f"Saving IBNS{task.host['ibns_ver']} configurations on all devices")
+    # prompt to proceed
+    proceed()
     # run "show dot1x all" on each host
     task.run(task=netmiko_save_config)
     c_print(f"*** {task.host}: configuration saved ***")
