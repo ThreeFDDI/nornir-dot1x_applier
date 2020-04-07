@@ -25,7 +25,7 @@ excluded_intf:      list of ports that will be excluded from dot1x
 
 '''
 
-import json
+import json, sys
 from getpass import getpass
 from nornir import InitNornir
 from nornir.plugins.tasks.networking import netmiko_send_command
@@ -39,6 +39,24 @@ from ttp import ttp
 def c_print(printme):
     # Print centered text with newline before and after
     print(f"\n" + printme.center(80, ' ') + "\n")
+
+
+# continue banner
+def proceed():
+    # print banner to proceed
+    c_print('**********  PROCEED? **********')
+    # capture user input
+    confirm = input(" "*37 + '(y/n) ')
+    # quit script if not confirmed
+    if confirm.lower() == 'y':
+        c_print("********** CONTINUING SCRIPT **********")
+    else:
+        c_print("********** EXITING SCRIPT **********")
+        print('~'*80)    
+        try:
+            sys.exit()
+        except:
+            print(sys.exc_info()[0])
 
 
 # set device credentials
@@ -187,11 +205,16 @@ def render_configs(task):
 def apply_configs(task):
     # print banner
     c_print(f"Applying IBNS{task.host['ibns_ver']} configuration files to devices")
+    # prompt to proceed
+    proceed()
     # apply config file for each host
     task.run(
         task=netmiko_send_config, 
         config_file=f"configs/{task.host}_dot1x.txt"
     )
+    # print completed hosts
+    c_print(f"*** {task.host}: dot1x configuration applied ***")
+
     print('~'*80)    
 
 
@@ -211,7 +234,7 @@ def verify_dot1x(task):
     parser.parse()
     dot1x_status = json.loads(parser.result(format='json')[0])
     # print dot1x status
-    c_print(f"*** {task.host}: {dot1x_status[0]['status']} ***")
+    c_print(f"*** {task.host} dot1x status: {dot1x_status[0]['status']} ***")
     # write dot1x verification report for each host
     with open(f"output/{task.host}_dot1x_verified.txt", "w+") as f:
         f.write(sh_dot1x.result)
