@@ -7,7 +7,7 @@ Cisco IBNS version 1 or 2 templates will be applied based on switch model.
 Catalyst 3750 series switches will receive IBNS version 1 and all other 
 switch models will receive IBNS version 2. 
 
-Additional variables required from SimpleInventory:
+Additional required variables from Source of Truth (SimpleInventory):
 
 ise_key:            ISE RADIUS key
 ise_vip_a_name:     ISE cluster A hostname
@@ -53,8 +53,9 @@ def nornir_set_creds(norn, username=None, password=None):
             host_obj.username = username
             password = getpass()
             host_obj.password = password
+            print()
 
-    print('\n' + '~'*80)
+    print('~'*80)
 
 
 # get info from switches
@@ -211,6 +212,11 @@ def main():
     nr.run(task=write_configs)
     # run The Norn to apply config files
     nr.run(task=apply_configs)
+
+    # run The Norn to verify dot1x config
+    #nr.run(task=apply_configs)
+    # run The Norn to save configurations
+    #nr.run(task=apply_configs)
 
 
 if __name__ == "__main__":
