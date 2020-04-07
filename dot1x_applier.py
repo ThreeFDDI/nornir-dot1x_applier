@@ -25,11 +25,13 @@ excluded_intf:      list of ports that will be excluded from dot1x
 
 '''
 
+import json
 from getpass import getpass
 from nornir import InitNornir
 from nornir.plugins.tasks.networking import netmiko_send_command
 from nornir.plugins.tasks.networking import netmiko_send_config
 from nornir.plugins.tasks import text
+from ttp import ttp
 
 
 # print formatting function
@@ -196,6 +198,31 @@ def apply_configs(task):
     print('~'*80)    
 
 
+def verify_dot1x(task):
+    # print banner
+    c_print(f"Verifying IBNS{task.host['ibns_ver']} configuration of devices")
+    # run "show dot1x all" on each host
+    sh_dot1x = task.run(
+        task=netmiko_send_command,
+        command_string="show dot1x all",
+    )
+    # TTP template for dot1x status
+    dot1x_ttp_template = "Sysauthcontrol              {{ status }}"
+    # magic TTP parsing
+    parser = ttp(data=sh_dot1x.result, template=dot1x_ttp_template)
+    parser.parse()
+    dot1x_status = json.loads(parser.result(format='json')[0])
+
+    c_print(f"*** {task.host}: {dot1x_status[0]['status']} ***")
+
+    task.run(
+        task=netmiko_send_config, 
+        config_file=f"output/{task.host}_dot1x_verified.txt"
+    )
+    return dot1x_status[0]['status']
+
+
+
 # main function
 def main():
     # initialize The Norn
@@ -212,9 +239,9 @@ def main():
     nr.run(task=write_configs)
     # run The Norn to apply config files
     nr.run(task=apply_configs)
-
     # run The Norn to verify dot1x config
-    #nr.run(task=apply_configs)
+    nr.run(task=verify_dot1x)
+
     # run The Norn to save configurations
     #nr.run(task=apply_configs)
 
