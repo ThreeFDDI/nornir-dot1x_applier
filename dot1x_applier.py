@@ -25,7 +25,7 @@ excluded_intf:      list of ports that will be excluded from dot1x
 
 '''
 
-import json, sys
+import json, site, sys
 from getpass import getpass
 from nornir import InitNornir
 from nornir.plugins.tasks.networking import netmiko_send_command
@@ -44,26 +44,28 @@ def c_print(printme):
 # continue banner
 def proceed():
     # print banner to proceed
-    c_print('**********  PROCEED? **********')
+    c_print('********** PROCEED? **********')
     # capture user input
-    confirm = input(" "*37 + '(y/n) ')
+    confirm = input(" "*36 + '(y/n) ')
     # quit script if not confirmed
-    if confirm.lower() == 'y':
-        c_print("****** CONTINUING SCRIPT ******")
-    else:
-        c_print("******* EXITING SCRIPT ********")
+    if confirm.lower() != 'y':
+        c_print("******* EXITING SCRIPT *******")
         print('~'*80)    
-        try:
-            sys.exit()
-        except:
-            print(sys.exc_info()[0])
+        exit()
+
+
+# failed hosts
+def failed_hosts(norn):
+    c_print(f'Failed hosts: {norn.inventory.failed_hosts}')
 
 
 # set device credentials
-def nornir_set_creds(norn, username=None, password=None):
+def kickoff(norn, username=None, password=None):
     # print banner
     print()
     print('~'*80)
+    c_print('This script will apply IBNS dot1x configurations to Cisco switches')
+    #c_print(f"*** {task.host}: dot1x configuration applied ***")
     c_print('Checking inventory for credentials')
     # check for existing credentials in inventory
     for host_obj in norn.inventory.hosts.values():
@@ -79,9 +81,6 @@ def nornir_set_creds(norn, username=None, password=None):
 
 # get info from switches
 def get_info(task):
-    # print banner
-    c_print('Gathering device configurations')
-
     # get software version; use TextFSM
     sh_version = task.run(
         task=netmiko_send_command,
@@ -117,19 +116,15 @@ def get_info(task):
     if "3750" in task.host['sw_model']:
         # 3750's use IBNSv1
         task.host['ibns_ver'] = 'v1'
-        c_print('*** IBNS version 1 detected ***')
+        c_print(f"*** {task.host}: IBNS version 1 ***")
     else:
         # all else use IBNSv2
         task.host['ibns_ver'] = 'v2'
-        c_print('*** IBNS version 1 detected ***')
-
-    print('~'*80)    
+        c_print(f"*** {task.host}: IBNS version 2 ***")
 
 
 # render IBNS global config templates
 def ibns_global(task):
-    # print banner
-    c_print(f"Rendering IBNS{task.host['ibns_ver']} global configurations")
     # render global configurations
     global_cfg = task.run(
         task=text.template_file, 
@@ -137,15 +132,12 @@ def ibns_global(task):
         path="templates/", 
         **task.host
     )
-    print('~'*80)    
     # return configuration
     return global_cfg.result
 
 
 # IBNS interface config templates
 def ibns_intf(task):
-    # print banner
-    c_print(f"Rendering IBNS{task.host['ibns_ver']} interface configurations")
     # init lists of interfaces
     access_interfaces = []
     uplink_interfaces = []
@@ -179,7 +171,6 @@ def ibns_intf(task):
         path="templates/", 
         **task.host
     )
-    print('~'*80)    
     # return configuration
     return uplink_intf_cfg.result + access_intf_cfg.result
 
@@ -193,20 +184,13 @@ def render_configs(task):
     # save concatenated config to task.host
     task.host['cfg_out'] = global_cfg + "\n" + intf_cfg
     
-    # print banner
-    c_print(f"Writing IBNS{task.host['ibns_ver']} configuration files to disk")
     # write config file for each host
     with open(f"configs/{task.host}_dot1x.txt", "w+") as f:
         f.write(task.host['cfg_out'])
-    print('~'*80)    
 
 
 # apply switch configs
 def apply_configs(task):
-    # print banner
-    c_print(f"Applying IBNS{task.host['ibns_ver']} configuration files to devices")
-    # prompt to proceed
-    proceed()
     # apply config file for each host
     task.run(
         task=netmiko_send_config, 
@@ -215,13 +199,9 @@ def apply_configs(task):
     # print completed hosts
     c_print(f"*** {task.host}: dot1x configuration applied ***")
 
-    print('~'*80)    
-
 
 # verify dot1x 
 def verify_dot1x(task):
-    # print banner
-    c_print(f"Verifying IBNS{task.host['ibns_ver']} configuration of devices")
     # run "show dot1x all" on each host
     sh_dot1x = task.run(
         task=netmiko_send_command,
@@ -238,19 +218,13 @@ def verify_dot1x(task):
     # write dot1x verification report for each host
     with open(f"output/{task.host}_dot1x_verified.txt", "w+") as f:
         f.write(sh_dot1x.result)
-    print('~'*80)    
 
 
 # save switch configs
 def save_configs(task):
-    # print banner
-    c_print(f"Saving IBNS{task.host['ibns_ver']} configurations on all devices")
-    # prompt to proceed
-    proceed()
     # run "show dot1x all" on each host
     task.run(task=netmiko_save_config)
     c_print(f"*** {task.host}: configuration saved ***")
-    print('~'*80)    
 
 
 # main function
@@ -259,18 +233,43 @@ def main():
     nr = InitNornir()
     # filter The Norn
     nr = nr.filter(platform="cisco_ios")
-    # check The Norn for credentials
-    nornir_set_creds(nr)
+    # run The Norn kickoff
+    kickoff(nr)
+
+    c_print('Gathering device configurations')
     # run The Norn to get info
     nr.run(task=get_info)
+    print('~'*80)
+
+    # render switch configs
+    c_print(f"Rendering IBNS dot1x configurations")
     # run The Norn to render dot1x config
     nr.run(task=render_configs)
+    print('~'*80)
+
+    # apply switch configs
+    c_print(f"Applying IBNS dot1x configuration files to devices")
+    # prompt to proceed
+    proceed()
     # run The Norn to apply config files
     nr.run(task=apply_configs)
+    print('~'*80)
+
+    # verify dot1x configs
+    c_print(f"Verifying IBNS dot1x configuration of devices")
     # run The Norn to verify dot1x config
     nr.run(task=verify_dot1x)
+    print('~'*80)
+
+    # print banner
+    c_print(f"Saving IBNS dot1x configurations on all devices")
+    # prompt to proceed
+    proceed()
     # run The Norn to save configurations
     nr.run(task=save_configs)
+    c_print(f'Failed hosts: {nr.data.failed_hosts}')
+
+    print('~'*80)
 
 
 if __name__ == "__main__":
