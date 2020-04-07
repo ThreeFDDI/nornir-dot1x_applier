@@ -30,6 +30,7 @@ from getpass import getpass
 from nornir import InitNornir
 from nornir.plugins.tasks.networking import netmiko_send_command
 from nornir.plugins.tasks.networking import netmiko_send_config
+from nornir.plugins.tasks.networking import netmiko_save_config
 from nornir.plugins.tasks import text
 from ttp import ttp
 
@@ -45,7 +46,7 @@ def nornir_set_creds(norn, username=None, password=None):
     # print banner
     print()
     print('~'*80)
-    c_print('Check inventory for device credentials')
+    c_print('Checking inventory for credentials')
 
     for host_obj in norn.inventory.hosts.values():
         
@@ -212,14 +213,23 @@ def verify_dot1x(task):
     parser = ttp(data=sh_dot1x.result, template=dot1x_ttp_template)
     parser.parse()
     dot1x_status = json.loads(parser.result(format='json')[0])
-
+    # print dot1x status
     c_print(f"*** {task.host}: {dot1x_status[0]['status']} ***")
+    # write dot1x verification report for each host
+    with open(f"output/{task.host}_dot1x_verified.txt", "w+") as f:
+        f.write(sh_dot1x.result)
+    print('~'*80)    
 
-    task.run(
-        task=netmiko_send_config, 
-        config_file=f"output/{task.host}_dot1x_verified.txt"
-    )
-    return dot1x_status[0]['status']
+
+def save_configs(task):
+    # print banner
+    c_print(f"Saving IBNS{task.host['ibns_ver']} configurations on all devices")
+    # run "show dot1x all" on each host
+    task.run(task=netmiko_save_config)
+    c_print(f"*** {task.host}: configuration saved ***")
+
+    print('~'*80)    
+
 
 
 
@@ -241,9 +251,8 @@ def main():
     nr.run(task=apply_configs)
     # run The Norn to verify dot1x config
     nr.run(task=verify_dot1x)
-
     # run The Norn to save configurations
-    #nr.run(task=apply_configs)
+    nr.run(task=save_configs)
 
 
 if __name__ == "__main__":
