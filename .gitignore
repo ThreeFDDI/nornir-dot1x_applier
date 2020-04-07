@@ -1,3 +1,4 @@
 hosts.yaml
 defaults.yaml
 groups.yaml
+configs/*.txt

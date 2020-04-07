@@ -6,12 +6,12 @@ logging console discriminator FILTER
 !
 logging origin-id hostname
 logging source-interface 777
-logging host 10.10.0.19 discriminator FILTER
-logging host 10.10.0.7 discriminator FILTER
+logging host {{ ise_vip_a_ip }} discriminator FILTER
+logging host {{ ise_vip_b_ip }} discriminator FILTER
 !
 aaa group server radius ISE
- server name <refer to table for Primary DC code>		Example: NA11, NA12, EM11, EM12
- server name <refer to table for Secondary DC code>	Example: NA11, NA12, EM11, EM12
+ server name {{ ise_vip_a_name }}
+ server name {{ ise_vip_b_name }}
  ip radius source-interface 777
 !
 aaa authentication dot1x default group ISE
@@ -21,12 +21,12 @@ aaa accounting update newinfo periodic 2880
 aaa accounting identity default start-stop group ISE
 !
 aaa server radius dynamic-author
- client 10.10.8.xx server-key 0 {{ ise_key }}
- client 10.10.8.xx server-key 0 {{ ise_key }}
- client 10.10.8.xx server-key 0 {{ ise_key }}
- client 10.10.8.xx server-key 0 {{ ise_key }}
- client 10.10.9.xx server-key 0 {{ ise_key }}
- client 10.10.9.xx server-key 0 {{ ise_key }}
+ client {{ ise_vip_a_ip }} server-key 0 {{ ise_key }}
+ client {{ ise_vip_a_psn1 }} server-key 0 {{ ise_key }}
+ client {{ ise_vip_a_psn2 }} server-key 0 {{ ise_key }}
+ client {{ ise_vip_b_ip }} server-key 0 {{ ise_key }}
+ client {{ ise_vip_b_psn1 }} server-key 0 {{ ise_key }}
+ client {{ ise_vip_b_psn2 }} server-key 0 {{ ise_key }}
 ip dhcp snooping
 no ip dhcp snooping information option
 ip dhcp snooping vlan {{ vlan_list }}
@@ -187,13 +187,13 @@ ip access-list extended IPV4_PRE_AUTH_ACL
  permit udp any any eq domain
  deny   ip any any
 !
-radius server NA11
-address ipv4 10.10.9.1 auth-port 1812 acct-port 1813
+radius server {{ ise_vip_a_name }}
+address ipv4 {{ ise_vip_a_ip }} auth-port 1812 acct-port 1813
 automate-tester username SVC_RADIUS_P ignore-acct-port probe-on
 key 0 {{ ise_key }}
 !
-radius server NA12
-address ipv4 10.10.9.17 auth-port 1812 acct-port 1813
+radius server {{ ise_vip_b_name }}
+address ipv4 {{ ise_vip_b_ip }} auth-port 1812 acct-port 1813
 automate-tester username SVC_RADIUS_P ignore-acct-port probe-on
 key 0 {{ ise_key }}
 !
