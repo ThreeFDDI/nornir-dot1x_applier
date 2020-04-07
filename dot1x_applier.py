@@ -86,6 +86,15 @@ def get_info(task):
     # save interfaces to task.host
     task.host['intfs'] = interfaces.result
 
+    # convert vlans in inventory from int to str
+    vlans = []
+    for vlan in task.host['vlans']:
+        vlans.append(str(vlan))
+    # save list of vlans strings back to task.host
+    task.host['vlans'] = vlans
+    # create vlan_list string
+    task.host['vlan_list'] = ",".join(task.host['vlans'])
+
     # choose template based on switch model
     if "3750" in task.host['sw_model']:
         # 3750's use IBNSv1
@@ -159,30 +168,21 @@ def ibns_intf(task):
 
 # render switch configs
 def render_configs(task):
-    # convert vlans in inventory from int to str
-    vlans = []
-    for vlan in task.host['vlans']:
-        vlans.append(str(vlan))
-    # save list of vlans strings back to task.host
-    task.host['vlans'] = vlans
-    # create vlan_list string
-    task.host['vlan_list'] = ",".join(task.host['vlans'])
     # function to render global configs
     global_cfg = ibns_global(task)
     # function to run interface configs
     intf_cfg = ibns_intf(task)
     # save concatenated config to task.host
     task.host['cfg_out'] = global_cfg + "\n" + intf_cfg
-
-
-# write switch configs
-def write_configs(task):
+    
     # print banner
     c_print(f"Writing IBNS{task.host['ibns_ver']} configuration files to disk")
     # write config file for each host
     with open(f"configs/{task.host}_dot1x.txt", "w+") as f:
         f.write(task.host['cfg_out'])
     print('~'*80)    
+
+
 
 
 # apply switch configs
@@ -242,8 +242,6 @@ def main():
     nr.run(task=get_info)
     # run The Norn to render dot1x config
     nr.run(task=render_configs)
-    # run The Norn to write config files
-    nr.run(task=write_configs)
     # run The Norn to apply config files
     nr.run(task=apply_configs)
     # run The Norn to verify dot1x config
