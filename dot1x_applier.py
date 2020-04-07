@@ -82,6 +82,7 @@ def get_info(task):
 
 # IBNS global config templates
 def ibns_global(task):
+    # render global configurations
     global_cfg = task.run(
         task=text.template_file, 
         template=f"IBNS{task.host['ibns_ver']}_{task.host['region']}_global.j2",
@@ -94,11 +95,9 @@ def ibns_global(task):
 
 # IBNS interface config templates
 def ibns_intf(task):
-    
     # init lists of interfaces
     access_interfaces = []
     uplink_interfaces = []
-
     # iterate over all interfaces 
     for intf in task.host['intfs']:
 
@@ -120,7 +119,6 @@ def ibns_intf(task):
         path="templates/", 
         **task.host
     )
-
     # assign access interface list to task.host
     task.host['access_interfaces'] = access_interfaces
     # render access interface configs
@@ -136,41 +134,36 @@ def ibns_intf(task):
 
 # render switch configs
 def render_configs(task):
-
     # convert vlans in inventory from int to str
     vlans = []
     for vlan in task.host['vlans']:
         vlans.append(str(vlan))
     # save list of vlans strings back to task.host
     task.host['vlans'] = vlans
-
     # create vlan_list string
     task.host['vlan_list'] = ",".join(task.host['vlans'])
-
-
     # function to render global configs
     global_cfg = ibns_global(task)
-
     # function to run interface configs
     intf_cfg = ibns_intf(task)
-
+    # save concatenated config to task.host
     task.host['cfg_out'] = global_cfg + "\n" + intf_cfg
 
 
 # write switch configs
 def write_configs(task):
-    # write config file
+    # write config file for each host
     with open(f"configs/{task.host}_dot1x.txt", "w+") as f:
         f.write(task.host['cfg_out'])
 
+
 # apply switch configs
 def apply_configs(task):
-
+    # apply config file for each host
     task.run(
         task=netmiko_send_config, 
         config_file=f"configs/{task.host}_dot1x.txt"
     )
-
 
 
 # main function
@@ -183,9 +176,9 @@ def main():
     nr.run(task=get_info)
     # run The Norn to apply dot1x config
     nr.run(task=render_configs)
-
+    # run The Norn to write config files
     nr.run(task=write_configs)
-
+    # run The Norn to apply config files
     #nr.run(task=apply_configs)
 
 
