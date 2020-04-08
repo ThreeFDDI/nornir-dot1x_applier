@@ -122,6 +122,15 @@ def get_info(task):
         task.host['ibns_ver'] = 'v2'
         c_print(f"*** {task.host}: IBNS version 2 ***")
 
+    # get ip interface brief; use TextFSM
+    ip_int_br = task.run(
+        task=netmiko_send_command,
+        command_string="show ip interface brief | e unas",
+        use_textfsm=True,
+    )
+    # save ip interfaces to task.host
+    task.host['ip_int_br'] = ip_int_br.result
+    
 
 # render IBNS global config templates
 def ibns_global(task):
@@ -171,8 +180,34 @@ def ibns_intf(task):
         path="templates/", 
         **task.host
     )
+
+    # init list of L3 vlan interfaces
+    l3_vlan_int = []
+    # list of vlan interfaces that will not relay
+    no_relay_ints = ["1","666","667"]
+    # iterate over active L3 interfaces
+    for intf in task.host['ip_int_br']:
+        # accept only those that are active vlan interfaces
+        if intf['intf'].startswith('Vlan') == True and intf['status'] == 'up':
+            # strip vlan id from interface name
+            vlan_id = intf['intf'].strip("Vlan")
+            # compare with list of no relay ints
+            if vlan_id not in no_relay_ints:
+                # add to list of interfaces for ISE DHPC relay
+                l3_vlan_int.append(intf['intf'])
+
+    # save L3 vlan interfaces to task.host
+    task.host['l3_vlan_int'] = l3_vlan_int
+    # render L3 vlan interface configs
+    l3_vlan_int_cfg = task.run(
+        task=text.template_file, 
+        template=f"IBNS_L3VLAN_intf.j2", 
+        path="templates/", 
+        **task.host
+    )
+
     # return configuration
-    return uplink_intf_cfg.result + access_intf_cfg.result
+    return uplink_intf_cfg.result + access_intf_cfg.result + l3_vlan_int_cfg.result
 
 
 # render switch configs
