@@ -271,6 +271,7 @@ def main():
     # run The Norn kickoff
     kickoff(nr)
 
+    # gather switch info
     c_print('Gathering device configurations')
     # run The Norn to get info
     nr.run(task=get_info)
