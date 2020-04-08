@@ -182,7 +182,7 @@ def ibns_intf(task):
     )
 
     # init list of L3 vlan interfaces
-    l3_vlan_int = []
+    l3_vlan_int = ["Vlan777"]
     # list of vlan interfaces that will not relay
     no_relay_ints = ["1","666","667"]
     # iterate over active L3 interfaces
