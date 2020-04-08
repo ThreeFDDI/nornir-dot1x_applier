@@ -5,14 +5,14 @@ logging monitor discriminator FILTER warnings
 logging console discriminator FILTER 
 !
 logging origin-id hostname
-logging source-interface 777
+logging source-interface vlan 777
 logging host {{ ise_vip_b_ip }} discriminator FILTER
 logging host {{ ise_vip_a_ip }} discriminator FILTER
 !
 aaa group server radius ISE
  server name {{ ise_vip_b_name }}
  server name {{ ise_vip_a_name }}
- ip radius source-interface 777
+ ip radius source-interface vlan 777
 !
 aaa authentication dot1x default group ISE
 aaa authentication dot1x default group ISE
@@ -164,7 +164,7 @@ event violation match-all
 ip http secure-active-session-modules none
 ip http max-connections 48
 ip http active-session-modules none
-ip http client source-interface 777
+ip http client source-interface vlan 777
 !
 radius-server attribute 6 on-for-login-auth
 radius-server attribute 8 include-in-access-req

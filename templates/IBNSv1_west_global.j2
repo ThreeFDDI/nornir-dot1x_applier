@@ -2,7 +2,7 @@ aaa group server radius ISE
  server {{ ise_vip_b_ip }} auth-port 1812 acct-port 1813
  server {{ ise_vip_a_ip }} auth-port 1812 acct-port 1813
  radius-server key {{ ise_key }}
- ip radius source-interface 777
+ ip radius source-interface vlan 777
 !
 aaa authentication dot1x default group ISE
 aaa authorization network default group ISE
@@ -27,8 +27,8 @@ dot1x critical eapol
 ip http secure-active-session-modules none
 ip http max-connections 20
 ip http active-session-modules none
-ip http client source-interface 777
-ip radius source-interface 777 vrf default
+ip http client source-interface vlan 777
+ip radius source-interface vlan 777 vrf default
 !
 radius-server attribute 6 on-for-login-auth
 radius-server attribute 6 support-multiple
