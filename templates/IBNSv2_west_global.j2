@@ -9,12 +9,21 @@ logging source-interface vlan 777
 logging host {{ ise_vip_b_ip }} discriminator FILTER
 logging host {{ ise_vip_a_ip }} discriminator FILTER
 !
+radius server {{ ise_vip_b_name }}
+address ipv4 {{ ise_vip_b_ip }} auth-port 1812 acct-port 1813
+automate-tester username SVC_RADIUS_P ignore-acct-port probe-on
+key 0 {{ ise_key }}
+!
+radius server {{ ise_vip_a_name }}
+address ipv4 {{ ise_vip_a_ip }} auth-port 1812 acct-port 1813
+automate-tester username SVC_RADIUS_P ignore-acct-port probe-on
+key 0 {{ ise_key }}
+!
 aaa group server radius ISE
  server name {{ ise_vip_b_name }}
  server name {{ ise_vip_a_name }}
  ip radius source-interface vlan 777
 !
-aaa authentication dot1x default group ISE
 aaa authentication dot1x default group ISE
 aaa authorization network default group ISE
 aaa accounting update newinfo periodic 2880
@@ -186,16 +195,6 @@ ip access-list extended IPV4_PRE_AUTH_ACL
  permit udp any any eq bootpc
  permit udp any any eq domain
  deny   ip any any
-!
-radius server {{ ise_vip_b_name }}
-address ipv4 {{ ise_vip_b_ip }} auth-port 1812 acct-port 1813
-automate-tester username SVC_RADIUS_P ignore-acct-port probe-on
-key 0 {{ ise_key }}
-!
-radius server {{ ise_vip_a_name }}
-address ipv4 {{ ise_vip_a_ip }} auth-port 1812 acct-port 1813
-automate-tester username SVC_RADIUS_P ignore-acct-port probe-on
-key 0 {{ ise_key }}
 !
 mac address-table notification mac-move
 !

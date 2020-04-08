@@ -9,12 +9,21 @@ logging source-interface vlan 777
 logging host {{ ise_vip_a_ip }} discriminator FILTER
 logging host {{ ise_vip_b_ip }} discriminator FILTER
 !
+radius server {{ ise_vip_a_name }}
+address ipv4 {{ ise_vip_a_ip }} auth-port 1812 acct-port 1813
+automate-tester username SVC_RADIUS_P ignore-acct-port probe-on
+key 0 {{ ise_key }}
+!
+radius server {{ ise_vip_b_name }}
+address ipv4 {{ ise_vip_b_ip }} auth-port 1812 acct-port 1813
+automate-tester username SVC_RADIUS_P ignore-acct-port probe-on
+key 0 {{ ise_key }}
+!
 aaa group server radius ISE
  server name {{ ise_vip_a_name }}
  server name {{ ise_vip_b_name }}
  ip radius source-interface vlan 777
 !
-aaa authentication dot1x default group ISE
 aaa authentication dot1x default group ISE
 aaa authorization network default group ISE
 aaa accounting update newinfo periodic 2880
@@ -75,11 +84,11 @@ access-session attributes filter-list list sensor_list
 access-session accounting attributes filter-spec include list sensor_list
 access-session mac-move deny
 access-session acl default passthrough
-!ISE server#
+!
 class-map type control subscriber match-all AAA_SVR_DOWN_AUTHD_HOST
  match result-type aaa-timeout
  match authorization-status authorized
-!ISE server#
+!
 class-map type control subscriber match-all AAA_SVR_DOWN_UNAUTHD_HOST
  match result-type aaa-timeout
  match authorization-status unauthorized
@@ -90,10 +99,10 @@ class-map type control subscriber match-all DOT1X
 class-map type control subscriber match-all DOT1X_FAILED
  match method dot1x
  match result-type method dot1x authoritative
-!server#
+!
 class-map type control subscriber match-all DOT1X_MEDIUM_PRIO
  match authorizing-method-priority gt 20
-!installed#
+!
 class-map type control subscriber match-all DOT1X_NO_RESP
  match method dot1x
  match result-type method dot1x agent-not-found
@@ -186,16 +195,6 @@ ip access-list extended IPV4_PRE_AUTH_ACL
  permit udp any any eq bootpc
  permit udp any any eq domain
  deny   ip any any
-!
-radius server {{ ise_vip_a_name }}
-address ipv4 {{ ise_vip_a_ip }} auth-port 1812 acct-port 1813
-automate-tester username SVC_RADIUS_P ignore-acct-port probe-on
-key 0 {{ ise_key }}
-!
-radius server {{ ise_vip_b_name }}
-address ipv4 {{ ise_vip_b_ip }} auth-port 1812 acct-port 1813
-automate-tester username SVC_RADIUS_P ignore-acct-port probe-on
-key 0 {{ ise_key }}
 !
 mac address-table notification mac-move
 !
