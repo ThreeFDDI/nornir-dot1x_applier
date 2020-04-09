@@ -56,7 +56,6 @@ def proceed():
         c_print("********* PROCEEDING *********")
 
 
-
 # set device credentials
 def kickoff(norn, username=None, password=None):
     # print banner
@@ -75,11 +74,6 @@ def kickoff(norn, username=None, password=None):
             print()
 
     print('~'*80)
-
-
-# failed hosts
-def failed_hosts(norn):
-    c_print(f'Failed hosts: {norn.inventory.failed_hosts}')
 
 
 # get info from switches
