@@ -52,6 +52,9 @@ def proceed():
         c_print("******* EXITING SCRIPT *******")
         print('~'*80)    
         exit()
+    else:
+        c_print("********* PROCEEDING *********")
+
 
 
 # set device credentials
