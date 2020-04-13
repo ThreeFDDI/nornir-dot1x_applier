@@ -204,7 +204,6 @@ def ibns_intf(task):
     )
 
     # return configuration
-    print(f"{task.host} int")
     return uplink_intf_cfg.result + access_intf_cfg.result + l3_vlan_int_cfg.result
 
 
