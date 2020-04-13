@@ -139,7 +139,7 @@ def ibns_global(task):
         **task.host
     )
     # return configuration
-    print(global_cfg.result)
+    print(f"{task.host} global")
     return global_cfg.result
 
 
@@ -205,6 +205,7 @@ def ibns_intf(task):
     )
 
     # return configuration
+    print(f"{task.host} int")
     return uplink_intf_cfg.result + access_intf_cfg.result + l3_vlan_int_cfg.result
 
 
