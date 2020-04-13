@@ -220,6 +220,9 @@ def render_configs(task):
     with open(f"configs/{task.host}_dot1x.txt", "w+") as f:
         f.write(task.host['cfg_out'])
 
+    # print completed hosts
+    c_print(f"*** {task.host}: dot1x configuration rendered ***")
+
 
 # apply switch configs
 def apply_configs(task):
@@ -245,11 +248,13 @@ def verify_dot1x(task):
     parser = ttp(data=sh_dot1x.result, template=dot1x_ttp_template)
     parser.parse()
     dot1x_status = json.loads(parser.result(format='json')[0])
-    # print dot1x status
-    c_print(f"*** {task.host} dot1x status: {dot1x_status[0]['status']} ***")
+    
     # write dot1x verification report for each host
     with open(f"output/{task.host}_dot1x_verified.txt", "w+") as f:
         f.write(sh_dot1x.result)
+
+    # print dot1x status
+    c_print(f"*** {task.host} dot1x status: {dot1x_status[0]['status']} ***")
 
 
 # save switch configs
