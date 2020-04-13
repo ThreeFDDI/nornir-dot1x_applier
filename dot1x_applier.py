@@ -31,7 +31,7 @@ from nornir import InitNornir
 from nornir.plugins.tasks.networking import netmiko_send_command
 from nornir.plugins.tasks.networking import netmiko_send_config
 from nornir.plugins.tasks.networking import netmiko_save_config
-from nornir.plugins.tasks.networking import napalm_configure
+from nornir.plugins.tasks.networking import netmiko_save_config
 from nornir.plugins.tasks import text
 from ttp import ttp
 
@@ -230,8 +230,7 @@ def render_configs(task):
 def apply_configs(task):
     # apply config file for each host
     task.run(
-        task=napalm_configure,
-        replace=False,
+        task=netmiko_send_config, 
         config_file=f"configs/{task.host}_dot1x.txt"
     )
     # print completed hosts
