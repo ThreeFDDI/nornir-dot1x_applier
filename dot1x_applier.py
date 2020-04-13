@@ -272,6 +272,8 @@ def main():
     c_print('Gathering device configurations')
     # run The Norn to get info
     nr.run(task=get_info)
+    # print failed hosts
+    c_print(f"Failed hosts: {nr.data.failed_hosts}")
     print('~'*80)
 
     # render switch configs
