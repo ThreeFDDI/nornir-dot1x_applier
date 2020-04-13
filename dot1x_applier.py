@@ -302,7 +302,7 @@ def main():
     # verify dot1x configs
     c_print(f"Verifying IBNS dot1x configuration of devices")
     # run The Norn to verify dot1x config
-    nr.run(task=verify_dot1x)
+    nr.run(task=verify_dot1x, num_workers=1)
     # print failed hosts
     c_print(f"Failed hosts: {nr.data.failed_hosts}")
     print('~'*80)
