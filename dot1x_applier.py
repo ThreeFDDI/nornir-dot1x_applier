@@ -298,6 +298,8 @@ def main():
     c_print(f"Verifying IBNS dot1x configuration of devices")
     # run The Norn to verify dot1x config
     nr.run(task=verify_dot1x)
+    # print failed hosts
+    c_print(f"Failed hosts: {nr.data.failed_hosts}")
     print('~'*80)
 
     # save dot1x configs
