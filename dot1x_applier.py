@@ -139,7 +139,6 @@ def ibns_global(task):
         **task.host
     )
     # return configuration
-    print(f"{task.host} global")
     return global_cfg.result
 
 
