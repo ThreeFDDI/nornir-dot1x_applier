@@ -278,6 +278,8 @@ def main():
     c_print(f"Rendering IBNS dot1x configurations")
     # run The Norn to render dot1x config
     nr.run(task=render_configs)
+    # print failed hosts
+    c_print(f"Failed hosts: {nr.data.failed_hosts}")
     print('~'*80)
 
     # apply switch configs
@@ -286,6 +288,8 @@ def main():
     proceed()
     # run The Norn to apply config files
     nr.run(task=apply_configs)
+    # print failed hosts
+    c_print(f"Failed hosts: {nr.data.failed_hosts}")
     print('~'*80)
 
     # verify dot1x configs
