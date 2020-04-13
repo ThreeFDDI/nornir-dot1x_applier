@@ -230,7 +230,8 @@ def render_configs(task):
 def apply_configs(task):
     # apply config file for each host
     task.run(
-        task=napalm_configure, 
+        task=napalm_configure,
+        replace=False,
         config_file=f"configs/{task.host}_dot1x.txt"
     )
     # print completed hosts
