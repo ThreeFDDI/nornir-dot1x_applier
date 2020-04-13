@@ -1,14 +1,3 @@
-logging discriminator FILTER facility drops accounting AAA|AUTHMGR|DOT1X|MAB
-!
-logging buffered discriminator FILTER 51200
-logging monitor discriminator FILTER warnings
-logging console discriminator FILTER 
-!
-logging origin-id hostname
-logging source-interface vlan 777
-logging host {{ ise_vip_b_ip }} discriminator FILTER
-logging host {{ ise_vip_a_ip }} discriminator FILTER
-!
 radius server {{ ise_vip_b_name }}
 address ipv4 {{ ise_vip_b_ip }} auth-port 1812 acct-port 1813
 automate-tester username SVC_RADIUS_P ignore-acct-port probe-on
