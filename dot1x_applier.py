@@ -3,6 +3,11 @@
 
 This script uses the Nornir framework to apply dot1x config to Catalyst switches.
 
+Site codes can be passed as an arguement to import specific inventory files
+"_hosts.yaml" and "_groups.yaml" will be appended to the site code and those
+files will be imported as inventory. If not site code is specified "hosts.yaml"
+and "groups.yaml" will be used.
+
 Cisco IBNS version 1 or 2 templates will be applied based on switch model. 
 Catalyst 3750 series switches will receive IBNS version 1 and all other 
 switch models will receive IBNS version 2. 
