@@ -110,7 +110,6 @@ def get_info(task):
         command_string="show version",
         use_textfsm=True,
     )
-    print(sh_version.result)
     # save show version output to task.host
     task.host['sh_version'] = sh_version.result[0]
     # pull model from show version
@@ -123,7 +122,6 @@ def get_info(task):
         command_string="show interface switchport",
         use_textfsm=True,
     )
-    print(interfaces.result)
     # save interfaces to task.host
     task.host['intfs'] = interfaces.result
     # convert vlans in inventory from int to str
