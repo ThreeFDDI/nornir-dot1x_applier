@@ -3,3 +3,5 @@ defaults.yaml
 groups.yaml
 configs/*dot1x.txt
 output/*verified.txt
+inventory/LAB1_hosts.yaml
+inventory/LAB1_groups.yaml

@@ -58,23 +58,48 @@ def proceed():
 
 
 # set device credentials
-def kickoff(norn, username=None, password=None):
+def kickoff():
     # print banner
     print()
     print('~'*80)
     c_print('This script will apply IBNS dot1x configurations to Cisco switches')
-    #c_print(f"*** {task.host}: dot1x configuration applied ***")
+
+    if len(sys.argv) < 2:
+        site = ""
+
+    else:
+        site = sys.argv[1] + "_"
+
+    # initialize The Norn
+    nr = InitNornir(
+        inventory={
+            "plugin": "nornir.plugins.inventory.simple.SimpleInventory",
+            "options": {
+                "host_file": f"inventory/{site}hosts.yaml",
+                "group_file": f"inventory/{site}groups.yaml",
+                "defaults_file": "inventory/defaults.yaml"
+            }
+        }
+    )
+    
+    # filter The Norn
+    nr = nr.filter(platform="cisco_ios")
+
+
     c_print('Checking inventory for credentials')
     # check for existing credentials in inventory
-    for host_obj in norn.inventory.hosts.values():
-        # set username and password if empty
-        if not host_obj.username:
-            c_print('Please enter device credentials:')
-            host_obj.username = input("Username: ")
-            host_obj.password = getpass()
-            print()
 
+    if nr.inventory.defaults.username == None or nr.inventory.defaults.password == None:
+        c_print('Please enter device credentials:')
+
+    if nr.inventory.defaults.username == None:
+        nr.inventory.defaults.username = input("Username: ")
+    
+    if nr.inventory.defaults.password == None:
+        nr.inventory.defaults.password = getpass()
+        print()
     print('~'*80)
+    return nr
 
 
 # get info from switches
@@ -85,22 +110,22 @@ def get_info(task):
         command_string="show version",
         use_textfsm=True,
     )
+    print(sh_version.result)
     # save show version output to task.host
     task.host['sh_version'] = sh_version.result[0]
     # pull model from show version
     sw_model = task.host['sh_version']['hardware'][0].split("-")
     # save model to task.host
     task.host['sw_model'] = sw_model[1]
-
     # get interfaces; use TextFSM
     interfaces = task.run(
         task=netmiko_send_command,
         command_string="show interface switchport",
         use_textfsm=True,
     )
+    print(interfaces.result)
     # save interfaces to task.host
     task.host['intfs'] = interfaces.result
-
     # convert vlans in inventory from int to str
     vlans = []
     for vlan in task.host['vlans']:
@@ -268,12 +293,9 @@ def save_configs(task):
 
 # main function
 def main():
-    # initialize The Norn
-    nr = InitNornir()
-    # filter The Norn
-    nr = nr.filter(platform="cisco_ios")
-    # run The Norn kickoff
-    kickoff(nr)
+
+    # kickoff The Norn 
+    nr = kickoff()
 
     # gather switch info
     c_print('Gathering device configurations')
