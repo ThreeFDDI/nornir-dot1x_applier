@@ -221,7 +221,6 @@ def ibns_intf(task):
             if vlan_id not in no_relay_ints:
                 # add to list of interfaces for ISE DHPC relay
                 l3_vlan_int.append(intf['intf'])
-                print()
 
     # save L3 vlan interfaces to task.host
     task.host['l3_vlan_int'] = l3_vlan_int
