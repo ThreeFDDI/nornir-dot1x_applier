@@ -62,6 +62,20 @@ def proceed():
         c_print("********* PROCEEDING *********")
 
 
+# test Nornir textfsm result
+def test_norn_textfsm(task, result, cmd):
+    # test norn result
+    if type(result) != list or type(result[0]) != dict:
+        c_print(f'*** {task.host}: ERROR running "{cmd}" ***')
+
+
+# test Nornir result
+def test_norn(task, result):
+    # test norn result
+    if type(result) != str:
+        c_print(f'*** {task.host}: ERROR running Nornir task ***')
+
+
 # set device credentials
 def kickoff():
     # print banner
@@ -110,11 +124,14 @@ def kickoff():
 # get info from switches
 def get_info(task):
     # get software version; use TextFSM
+    cmd = "show version"
     sh_version = task.run(
         task=netmiko_send_command,
-        command_string="show version",
+        command_string=cmd,
         use_textfsm=True,
     )
+    # test Nornir result
+    test_norn_textfsm(task, sh_version.result, cmd)
     # save show version output to task.host
     task.host['sh_version'] = sh_version.result[0]
     # pull model from show version
@@ -122,11 +139,14 @@ def get_info(task):
     # save model to task.host
     task.host['sw_model'] = sw_model[1]
     # get interfaces; use TextFSM
+    cmd = "show interface switchport"
     interfaces = task.run(
         task=netmiko_send_command,
-        command_string="show interface switchport",
+        command_string=cmd,
         use_textfsm=True,
     )
+    # test Nornir result
+    test_norn_textfsm(task, interfaces.result, cmd)
     # save interfaces to task.host
     task.host['intfs'] = interfaces.result
     # convert vlans in inventory from int to str
@@ -149,11 +169,14 @@ def get_info(task):
         c_print(f"*** {task.host}: IBNS version 2 ***")
 
     # get ip interface brief; use TextFSM
+    cmd = "show ip interfae brief | e unas"
     ip_int_br = task.run(
         task=netmiko_send_command,
-        command_string="show ip interface brief | e unas",
+        command_string=cmd,
         use_textfsm=True,
     )
+    # test Nornir result
+    test_norn_textfsm(task, ip_int_br.result, cmd)
     # save ip interfaces to task.host
     task.host['ip_int_br'] = ip_int_br.result
     
