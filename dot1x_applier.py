@@ -102,7 +102,7 @@ def kickoff():
     )
     
     # filter The Norn
-    nr = nr.filter(platform="cios")
+    nr = nr.filter(platform="ios")
 
 
     c_print('Checking inventory for credentials')
