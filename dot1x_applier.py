@@ -121,6 +121,29 @@ def kickoff():
     return nr
 
 
+# enable SCP
+def scp_enable(task):
+    # enable SCP for NAPALM
+    cmd = "ip scp server enable"
+    task.run(
+        task=netmiko_send_config,
+        config_commands=cmd
+    )
+    c_print(f"*** {task.host}: SCP has been enabled ***")
+
+
+# disable SCP
+def scp_disable(task):
+    # disable SCP server
+    cmd = "no ip scp server enable"
+    task.run(
+        task=netmiko_send_config,
+        config_commands=cmd
+    )
+    task.run(task=netmiko_save_config)
+    c_print(f"*** {task.host}: SCP has been disabled ***")
+
+
 # get info from switches
 def get_info(task):
     # get software version; use TextFSM
@@ -169,7 +192,7 @@ def get_info(task):
         c_print(f"*** {task.host}: IBNS version 2 ***")
 
     # get ip interface brief; use TextFSM
-    cmd = "show ip interfae brief | e unas"
+    cmd = "show ip interface brief | e unas"
     ip_int_br = task.run(
         task=netmiko_send_command,
         command_string=cmd,
@@ -309,18 +332,19 @@ def verify_dot1x(task):
     c_print(f"*** {task.host} dot1x status: {dot1x_status[0]['status']} ***")
 
 
-# save switch configs
-def save_configs(task):
-    # run "show dot1x all" on each host
-    task.run(task=netmiko_save_config)
-    c_print(f"*** {task.host}: configuration saved ***")
-
-
 # main function
 def main():
 
     # kickoff The Norn 
     nr = kickoff()
+
+    # enable SCP
+    c_print(f"Enabling SCP for NAPALM on all devices")
+    # run The Norn to enable SCP
+    nr.run(task=scp_enable)
+    c_print(f'Failed hosts: {nr.data.failed_hosts}')
+    print('~'*80)
+
 
     # gather switch info
     c_print('Gathering device configurations')
@@ -339,7 +363,7 @@ def main():
     print('~'*80)
 
     # apply switch configs
-    c_print(f"Applying IBNS dot1x configuration files to devices")
+    c_print(f"Applying IBNS dot1x configuration files to all devices")
     # prompt to proceed
     proceed()
     # run The Norn to apply config files
@@ -349,21 +373,21 @@ def main():
     print('~'*80)
 
     # verify dot1x configs
-    c_print(f"Verifying IBNS dot1x configuration of devices")
+    c_print(f"Verifying IBNS dot1x configuration of all devices")
     # run The Norn to verify dot1x config
     nr.run(task=verify_dot1x, num_workers=1)
     # print failed hosts
     c_print(f"Failed hosts: {nr.data.failed_hosts}")
     print('~'*80)
 
-#    # save dot1x configs
-#    c_print(f"Saving IBNS dot1x configurations on all devices")
-#    # prompt to proceed
-#    proceed()
-#    # run The Norn to save configurations
-#    nr.run(task=save_configs)
-#    c_print(f'Failed hosts: {nr.data.failed_hosts}')
-#    print('~'*80)
+    # disable SCP
+    c_print(f"Disabling SCP server on all devices")
+    # prompt to proceed
+    proceed()
+    # run The Norn to disable SCP and save configs
+    nr.run(task=scp_disable)
+    c_print(f'Failed hosts: {nr.data.failed_hosts}')
+    print('~'*80)
 
 
 if __name__ == "__main__":
