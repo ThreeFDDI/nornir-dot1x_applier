@@ -111,7 +111,7 @@ def kickoff():
     else:
         c_print("This script will apply IBNS dot1x configurations to the following devices:")
         for host in nr.inventory.hosts.keys():
-            c_print(f"*** host ***")
+            c_print(f"*** {host} ***")
 
     c_print('Checking inventory for credentials')
     # check for existing credentials in inventory
