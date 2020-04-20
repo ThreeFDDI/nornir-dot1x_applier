@@ -78,23 +78,28 @@ def test_norn(task, result):
 
 # set device credentials
 def kickoff():
+    # check arguments for site code
+    if len(sys.argv) < 2:
+        # set no site code
+        site = ""
+        site_ = ""
+
+    else:
+        # set site code
+        site = sys.argv[1]
+        site_ = sys.argv[1] + "_"
+
     # print banner
     print()
     print('~'*80)
-
-    if len(sys.argv) < 2:
-        site = ""
-
-    else:
-        site = sys.argv[1] + "_"
 
     # initialize The Norn
     nr = InitNornir(
         inventory={
             "plugin": "nornir.plugins.inventory.simple.SimpleInventory",
             "options": {
-                "host_file": f"inventory/{site}hosts.yaml",
-                "group_file": f"inventory/{site}groups.yaml",
+                "host_file": f"inventory/{site_}hosts.yaml",
+                "group_file": f"inventory/{site_}groups.yaml",
                 "defaults_file": "inventory/defaults.yaml"
             }
         }
@@ -109,7 +114,8 @@ def kickoff():
         exit()
     
     else:
-        c_print("This script will apply IBNS dot1x configurations to the following devices:")
+        c_print("This script will apply IBNS dot1x configurations to Cisco Catalyst switches")
+        c_print(f"Inventory includes the following devices {site}:")
         for host in nr.inventory.hosts.keys():
             c_print(f"*** {host} ***")
 
