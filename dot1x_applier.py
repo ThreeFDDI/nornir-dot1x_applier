@@ -102,7 +102,7 @@ def kickoff():
     )
     
     # filter The Norn
-    nr = nr.filter(platform="ios")
+    nr = nr.filter(platform="cios")
 
 
     c_print('Checking inventory for credentials')
@@ -111,12 +111,18 @@ def kickoff():
     if nr.inventory.defaults.username == None or nr.inventory.defaults.password == None:
         c_print('Please enter device credentials:')
 
-    if nr.inventory.defaults.username == None:
-        nr.inventory.defaults.username = input("Username: ")
+        if nr.inventory.defaults.username == None:
+            nr.inventory.defaults.username = input("Username: ")
+        
+        if nr.inventory.defaults.password == None:
+            nr.inventory.defaults.password = getpass()
+            print()
+
+    if len(nr.inventory.hosts) == 0:
+        c_print('*** No matching hosts found in inventory ***')
+        print('~'*80)
+        exit()
     
-    if nr.inventory.defaults.password == None:
-        nr.inventory.defaults.password = getpass()
-        print()
     print('~'*80)
     return nr
 
@@ -344,7 +350,6 @@ def main():
     nr.run(task=scp_enable)
     c_print(f'Failed hosts: {nr.data.failed_hosts}')
     print('~'*80)
-
 
     # gather switch info
     c_print('Gathering device configurations')
