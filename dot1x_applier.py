@@ -123,6 +123,11 @@ def kickoff():
         print('~'*80)
         exit()
     
+    else:
+        c_print("IBNS dot1x configurations will be applied to the following devices:")
+        for host in nr.inventory.hosts.keys():
+            c_print(host)
+
     print('~'*80)
     return nr
 
