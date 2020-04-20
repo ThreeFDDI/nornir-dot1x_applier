@@ -81,7 +81,6 @@ def kickoff():
     # print banner
     print()
     print('~'*80)
-    c_print('This script will apply IBNS dot1x configurations to Cisco switches')
 
     if len(sys.argv) < 2:
         site = ""
@@ -104,6 +103,15 @@ def kickoff():
     # filter The Norn
     nr = nr.filter(platform="ios")
 
+    if len(nr.inventory.hosts) == 0:
+        c_print('*** No matching hosts found in inventory ***')
+        print('~'*80)
+        exit()
+    
+    else:
+        c_print("This script will apply IBNS dot1x configurations to the following devices:")
+        for host in nr.inventory.hosts.keys():
+            c_print(f"*** host ***")
 
     c_print('Checking inventory for credentials')
     # check for existing credentials in inventory
@@ -117,16 +125,6 @@ def kickoff():
         if nr.inventory.defaults.password == None:
             nr.inventory.defaults.password = getpass()
             print()
-
-    if len(nr.inventory.hosts) == 0:
-        c_print('*** No matching hosts found in inventory ***')
-        print('~'*80)
-        exit()
-    
-    else:
-        c_print("IBNS dot1x configurations will be applied to the following devices:")
-        for host in nr.inventory.hosts.keys():
-            c_print(host)
 
     print('~'*80)
     return nr
