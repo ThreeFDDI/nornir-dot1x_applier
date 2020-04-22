@@ -35,8 +35,6 @@ radius-server attribute 6 support-multiple
 radius-server attribute 8 include-in-access-req
 radius-server attribute 25 access-request include
 radius-server dead-criteria time 5 tries 3
-radius-server host {{ ise_vip_b_ip }} auth-port 1812 acct-port 1813 test username SVC_RADIUS_P key 0 {{ ise_key }}
-radius-server host {{ ise_vip_a_ip }} auth-port 1812 acct-port 1813 test username SVC_RADIUS_P key 0 {{ ise_key }}
 radius-server deadtime 15
 radius-server vsa send accounting
 radius-server vsa send authentication
