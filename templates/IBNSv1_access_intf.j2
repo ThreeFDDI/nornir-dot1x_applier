@@ -3,7 +3,7 @@ interface {{ intf.interface }}
  authentication event fail action next-method
  authentication event server dead action authorize vlan {{ intf.access_vlan }}
  authentication event server dead action authorize voice
- authentication event server alive action reinitialize 
+ authentication event server alive action reinitialize
  authentication host-mode multi-auth
  authentication open
  authentication order dot1x mab
@@ -17,9 +17,8 @@ interface {{ intf.interface }}
  dot1x pae authenticator
  dot1x timeout quiet-period 300
  dot1x timeout tx-period 10
- no switchport port-security maximum 
+ no switchport port-security maximum
  no switchport port-security
- no switchport port-security aging time 
- no switchport port-security aging type 
-!
+ no switchport port-security aging time
+ no switchport port-security aging type
 {% endfor %}
