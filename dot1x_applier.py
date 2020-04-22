@@ -307,19 +307,13 @@ def render_configs(task):
     # write global config file for each host
     with open(f"configs/{task.host}_dot1x_global.txt", "w+") as f:
         f.write(global_cfg)
+    # print completed hosts
+    c_print(f"*** {task.host}: dot1x global configuration rendered ***")
     # write interface config file for each host
     with open(f"configs/{task.host}_dot1x_intf.txt", "w+") as f:
         f.write(intf_cfg)
-
-    # save concatenated config to task.host
-    #task.host['cfg_out'] = global_cfg + "\n" + intf_cfg
-    
-    # write config file for each host
-#    with open(f"configs/{task.host}_dot1x.txt", "w+") as f:
-#        f.write(task.host['cfg_out'])
-
     # print completed hosts
-    c_print(f"*** {task.host}: dot1x configuration rendered ***")
+    c_print(f"*** {task.host}: dot1x interface configuration rendered ***")
 
 
 # apply switch configs
@@ -329,12 +323,14 @@ def apply_configs(task):
         task=napalm_configure, 
         filename=f"configs/{task.host}_dot1x_global.txt"
     )
+    # print completed hosts
+    c_print(f"*** {task.host}: dot1x global configuration applied ***")
     task.run(
         task=napalm_configure, 
         filename=f"configs/{task.host}_dot1x_intf.txt"
     )
     # print completed hosts
-    c_print(f"*** {task.host}: dot1x configuration applied ***")
+    c_print(f"*** {task.host}: dot1x interface configuration applied ***")
 
 
 # verify dot1x 
