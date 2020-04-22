@@ -1,10 +1,5 @@
 ---
 switches:
-  platform: ios
-  connection_options:
-    netmiko:
-      platform: cisco_ios
-  port: 22
   data:
     region: west
     vlans:

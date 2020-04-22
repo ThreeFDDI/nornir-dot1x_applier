@@ -6,3 +6,4 @@ output/*verified.txt
 inventory/LAB1_hosts.yaml
 inventory/LAB1_groups.yaml
 mylogs
+myoutput.txt

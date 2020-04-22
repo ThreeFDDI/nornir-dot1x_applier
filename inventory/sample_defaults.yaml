@@ -1,6 +1,17 @@
 ---
 username: admin
 password: cisco
+platform: ios
+connection_options:
+  netmiko:
+    platform: cisco_ios
+  napalm:
+    extras:
+      optional_args:
+        session_log: session_log.txt
+        global_delay_factor: 3
+        max_loops: 1000
+port: 22
 data:
   ise_key: c1sc0123!
   ise_vip_a_name: ISE_A
