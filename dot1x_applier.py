@@ -304,12 +304,19 @@ def render_configs(task):
     global_cfg = ibns_global(task)
     # function to run interface configs
     intf_cfg = ibns_intf(task)
+    # write global config file for each host
+    with open(f"configs/{task.host}_dot1x_global.txt", "w+") as f:
+        f.write(global_cfg)
+    # write interface config file for each host
+    with open(f"configs/{task.host}_dot1x_intf.txt", "w+") as f:
+        f.write(intf_cfg)
+
     # save concatenated config to task.host
-    task.host['cfg_out'] = global_cfg + "\n" + intf_cfg
+    #task.host['cfg_out'] = global_cfg + "\n" + intf_cfg
     
     # write config file for each host
-    with open(f"configs/{task.host}_dot1x.txt", "w+") as f:
-        f.write(task.host['cfg_out'])
+#    with open(f"configs/{task.host}_dot1x.txt", "w+") as f:
+#        f.write(task.host['cfg_out'])
 
     # print completed hosts
     c_print(f"*** {task.host}: dot1x configuration rendered ***")
@@ -320,7 +327,11 @@ def apply_configs(task):
     # apply config file for each host
     task.run(
         task=napalm_configure, 
-        filename=f"configs/{task.host}_dot1x.txt"
+        filename=f"configs/{task.host}_dot1x_global.txt"
+    )
+    task.run(
+        task=napalm_configure, 
+        filename=f"configs/{task.host}_dot1x_intf.txt"
     )
     # print completed hosts
     c_print(f"*** {task.host}: dot1x configuration applied ***")
