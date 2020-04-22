@@ -387,7 +387,7 @@ def main():
     # apply switch configs
     c_print(f"Applying IBNS dot1x configuration files to all devices")
     # prompt to proceed
-    #proceed()
+    proceed()
     # run The Norn to apply config files
     nr.run(task=apply_configs)
     # print failed hosts
@@ -405,7 +405,7 @@ def main():
     # disable SCP
     c_print(f"Disabling SCP server on all devices")
     # prompt to proceed
-    #proceed()
+    proceed()
     # run The Norn to disable SCP and save configs
     nr.run(task=scp_disable)
     c_print(f'Failed hosts: {nr.data.failed_hosts}')
