@@ -323,6 +323,16 @@ def render_configs(task):
 
 # apply switch configs
 def apply_configs(task):
+
+    if "3750X" in task.host['sw_model']:
+        # 3750X's use IBNSv2-modified
+            # get ip interface brief; use TextFSM
+        cmd = "authentication display config-mode"
+        task.run(
+            task=netmiko_send_command,
+            command_string=cmd
+        )
+
     # apply config file for each host
     task.run(
         task=napalm_configure, 
