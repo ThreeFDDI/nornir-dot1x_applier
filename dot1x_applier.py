@@ -198,10 +198,15 @@ def get_info(task):
     task.host['vlan_list'] = ",".join(task.host['vlans'])
 
     # choose template based on switch model
-    if "3750" in task.host['sw_model']:
-        # 3750's use IBNSv1
+    if "3750V2" in task.host['sw_model']:
+        # 3750V2's use IBNSv1
         task.host['ibns_ver'] = 'v1'
         c_print(f"*** {task.host}: IBNS version 1 ***")
+    elif "3750X" in task.host['sw_model']:
+        # 3750X's use IBNSv2-modified
+        task.host['ibns_ver'] = 'v2-alt'
+        c_print(f"*** {task.host}: IBNS version 2 /(modified/) ***")
+
     else:
         # all else use IBNSv2
         task.host['ibns_ver'] = 'v2'
