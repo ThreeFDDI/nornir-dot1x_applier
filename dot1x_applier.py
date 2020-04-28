@@ -324,15 +324,15 @@ def render_configs(task):
 # apply switch configs
 def apply_configs(task):
 
-    if "3750X" in task.host['sw_model']:
-        # 3750X's use IBNSv2-modified
-            # get ip interface brief; use TextFSM
-        cmd = "authentication display config-mode"
-        task.run(
-            task=netmiko_send_command,
-            command_string=cmd
-        )
-        c_print(f"*** {task.host}: authentication display config-mode enabled ***")
+#    if "3750X" in task.host['sw_model']:
+#        # 3750X's use IBNSv2-modified
+#            # get ip interface brief; use TextFSM
+#        cmd = "authentication display config-mode"
+#        task.run(
+#            task=netmiko_send_command,
+#            command_string=cmd
+#        )
+#        c_print(f"*** {task.host}: authentication display config-mode enabled ***")
 
     # apply config file for each host
     task.run(
