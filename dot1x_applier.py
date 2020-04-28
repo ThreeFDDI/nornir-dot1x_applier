@@ -332,6 +332,7 @@ def apply_configs(task):
             task=netmiko_send_command,
             command_string=cmd
         )
+        c_print(f"*** {task.host}: authentication display config-mode enabled ***")
 
     # apply config file for each host
     task.run(
