@@ -1,7 +1,7 @@
 aaa group server radius ISE
-server {{ ise_vip_a_ip }} auth-port 1812 acct-port 1813
-server {{ ise_vip_b_ip }} auth-port 1812 acct-port 1813
-radius-server key {{ ise_key }}
+ server {{ ise_vip_a_ip }} auth-port 1812 acct-port 1813
+ server {{ ise_vip_b_ip }} auth-port 1812 acct-port 1813
+ radius-server key {{ ise_key }}
  ip radius source-interface {{ mgmt_src }}
 aaa authentication dot1x default group ISE
 aaa authorization network default group ISE
