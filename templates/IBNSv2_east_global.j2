@@ -3,7 +3,7 @@ logging buffered discriminator FILTER 51200
 logging monitor discriminator FILTER warnings
 logging console discriminator FILTER
 logging origin-id hostname
-logging source-interface vlan 777
+logging source-interface {{ mgmt_src }}
 logging host {{ ise_vip_a_ip }} discriminator FILTER
 logging host {{ ise_vip_b_ip }} discriminator FILTER
 radius server {{ ise_vip_a_name }}
@@ -17,7 +17,7 @@ key 0 {{ ise_key }}
 aaa group server radius ISE
  server name {{ ise_vip_a_name }}
  server name {{ ise_vip_b_name }}
- ip radius source-interface vlan 777
+ ip radius source-interface {{ mgmt_src }}
 aaa authentication dot1x default group ISE
 aaa authorization network default group ISE
 aaa accounting update newinfo periodic 2880
@@ -146,7 +146,7 @@ event violation match-all
 ip http secure-active-session-modules none
 ip http max-connections 48
 ip http active-session-modules none
-ip http client source-interface vlan 777
+ip http client source-interface {{ mgmt_src }}
 radius-server attribute 6 on-for-login-auth
 radius-server attribute 8 include-in-access-req
 radius-server attribute 25 access-request include

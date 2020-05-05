@@ -1,6 +1,7 @@
 ---
 switches:
   data:
+    mgmt_src: Vlan 888
     region: west
     vlans:
       - 101
