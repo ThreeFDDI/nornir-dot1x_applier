@@ -362,7 +362,7 @@ def aaa_3750x_test(task):
             task=netmiko_send_command,
             command_string=cmd
         )
-        print(set_aaa.result)
+        print(set_aaa.result + "\n")
 
 
     # Manually create Netmiko connection
@@ -371,18 +371,22 @@ def aaa_3750x_test(task):
     print(net_connect.find_prompt())
     cmd = "aaa accounting identity default start-stop group ISE"
     output = net_connect.config_mode()
+    print(output)
+
     output += net_connect.send_command(
         cmd, 
         expect_string=r"yes", 
         strip_prompt=False, 
         strip_command=False
     )
+    print(output)
     output += net_connect.send_command(
         "yes", 
         expect_string=r"#",
         strip_prompt=False, 
         strip_command=False
     )
+    print(output)
     output += net_connect.exit_config_mode()
     print(output)
 
