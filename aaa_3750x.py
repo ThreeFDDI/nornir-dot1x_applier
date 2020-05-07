@@ -365,30 +365,30 @@ def aaa_3750x_test(task):
         print(set_aaa.result + "\n")
 
 
-    # Manually create Netmiko connection
-    net_connect = task.host.get_connection("netmiko", task.nornir.config)
+        # Manually create Netmiko connection
+        net_connect = task.host.get_connection("netmiko", task.nornir.config)
 
-    print(net_connect.find_prompt())
-    cmd = "aaa accounting identity default start-stop group ISE"
-    output = net_connect.config_mode()
-    print(output)
+        print(net_connect.find_prompt())
+        cmd = "aaa accounting identity default start-stop group ISE"
+        output = net_connect.config_mode()
+        print(output)
 
-    output += net_connect.send_command(
-        cmd, 
-        expect_string=r"yes", 
-        strip_prompt=False, 
-        strip_command=False
-    )
-    print(output)
-    output += net_connect.send_command(
-        "yes", 
-        expect_string=r"#",
-        strip_prompt=False, 
-        strip_command=False
-    )
-    print(output)
-    output += net_connect.exit_config_mode()
-    print(output)
+        output += net_connect.send_command(
+            cmd, 
+            expect_string=r"yes", 
+            strip_prompt=False, 
+            strip_command=False
+        )
+        print(output)
+        output += net_connect.send_command(
+            "yes", 
+            expect_string=r"#",
+            strip_prompt=False, 
+            strip_command=False
+        )
+        print(output)
+        output += net_connect.exit_config_mode()
+        print(output)
 
 #    cmd = "aaa accounting identity default start-stop group ISE"
 #    aaa_result = task.run(
