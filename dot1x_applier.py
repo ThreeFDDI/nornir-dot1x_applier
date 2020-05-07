@@ -213,10 +213,11 @@ def get_info(task):
         # 3750V2's use IBNSv1
         task.host["ibns_ver"] = "v1"
         c_print(f"*** {task.host}: IBNS version 1 ***")
-    #    elif "3750X" in task.host['sw_model']:
-    #        # 3750X's use IBNSv2-modified
-    #        task.host['ibns_ver'] = 'v2-alt'
-    #        c_print(f"*** {task.host}: IBNS version 2 (modified) ***")
+
+    elif "3750X" in task.host['sw_model']:
+        # 3750X's use IBNSv2-modified
+        task.host['ibns_ver'] = 'v2-alt'
+        c_print(f"*** {task.host}: IBNS version 2 (modified) ***")
 
     else:
         # all else use IBNSv2
