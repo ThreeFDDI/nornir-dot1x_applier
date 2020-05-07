@@ -462,6 +462,8 @@ def main():
 #    c_print(f"Failed hosts: {nr.data.failed_hosts}")
 #    print("~" * 80)
     nr.run(task=aaa_3750x_test)
+    c_print(f"Failed hosts: {nr.data.failed_hosts}")
+    print("~" * 80)
 
 if __name__ == "__main__":
     main()
