@@ -356,6 +356,14 @@ def aaa_3750x_test(task):
     )
     print(aaa_mode.result)
     #c_print(f"*** {task.host}: authentication display config-mode enabled ***")
+    if "legacy" in aaa_mode.result:
+        cmd = "authentication display new-style"
+        set_aaa = task.run(
+            task=netmiko_send_command,
+            command_string=cmd
+        )
+        print(set_aaa.result)
+
 
 
 
