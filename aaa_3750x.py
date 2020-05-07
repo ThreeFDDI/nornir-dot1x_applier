@@ -363,7 +363,7 @@ def aaa_3750x_test(task):
     # print current authentication display config-mode
     c_print(f"*** {task.host}: {aaa_mode} ***")
 
-    if "legacy" in aaa_mode.result:
+    if "legacy" in aaa_mode:
     
         cmd = "authentication display new-style"
         task.run(
