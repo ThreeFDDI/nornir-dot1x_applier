@@ -349,29 +349,34 @@ def verify_dot1x(task):
 
 
 def aaa_3750x_test(task):
+    """
+    Function to deal with 3750X AAA madness
+    """
+    # check current authentication display config-mode
     cmd = "authentication display config-mode"
     aaa_mode = task.run(
         task=netmiko_send_command,
         command_string=cmd
     )
-    print(aaa_mode.result)
-    #c_print(f"*** {task.host}: authentication display config-mode enabled ***")
+    # print current authentication display config-mode
+    c_print(f"*** {task.host}: {aaa_mode.result} ***")
+
     if "legacy" in aaa_mode.result:
+    
+        c_print(f"*** {task.host}: enabling authentication display new-style ***")
+
         cmd = "authentication display new-style"
-        set_aaa = task.run(
+        task.run(
             task=netmiko_send_command,
             command_string=cmd
         )
-        print(set_aaa.result + "\n")
-
 
         # Manually create Netmiko connection
         net_connect = task.host.get_connection("netmiko", task.nornir.config)
 
-        print(net_connect.find_prompt())
         cmd = "aaa accounting identity default start-stop group ISE"
+
         output = net_connect.config_mode()
-        print(output)
 
         output += net_connect.send_command(
             cmd, 
@@ -379,31 +384,18 @@ def aaa_3750x_test(task):
             strip_prompt=False, 
             strip_command=False
         )
-        print(output)
+
         output += net_connect.send_command(
             "yes", 
             expect_string=r"#",
             strip_prompt=False, 
             strip_command=False
         )
-        print(output)
         output += net_connect.exit_config_mode()
-        print(output)
 
-#    cmd = "aaa accounting identity default start-stop group ISE"
-#    aaa_result = task.run(
-#        task=netmiko_send_config,
-#        use_timing=True,
-#        command_string=cmd,
-#    )
-#    print(aaa_result.result)
-#    if 'confirm' in aaa_result.result:
-#        confirm_result = task.run(
-#            task=netmiko_send_command,
-#            use_timing=True,
-#            command_string="yes",
-#        )
-#        print(confirm_result.result)
+        c_print(f"*** {task.host}: authentication display new-style enabled ***")
+
+
 
 
 
