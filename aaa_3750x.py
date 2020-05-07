@@ -364,6 +364,21 @@ def aaa_3750x_test(task):
         )
         print(set_aaa.result)
 
+    cmd = "aaa accounting identity default start-stop group ISE"
+    aaa_result = task.run(
+        task=netmiko_send_command,
+        use_timing=True,
+        command_string=cmd,
+    )
+
+    if 'confirm' in aaa_result.result:
+        result = task.run(
+            task=netmiko_send_config,
+            use_timing=True,
+            command_string="yes",
+        )
+        print(result.result)
+
 
 
 
