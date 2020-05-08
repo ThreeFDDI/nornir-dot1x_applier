@@ -339,7 +339,6 @@ def render_configs(task):
     c_print(f"*** {task.host}: dot1x intf configurations rendered ***")
 
 
-
 def aaa_3750x(task):
     """
     Function to deal with 3750X AAA madness
