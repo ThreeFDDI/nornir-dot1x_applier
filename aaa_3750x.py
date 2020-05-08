@@ -135,33 +135,33 @@ def aaa_3750x_test(task):
         task=netmiko_send_command,
         command_string=cmd
     )
-
+    # strip result for printing
     aaa_mode = aaa_mode.result.strip('\n')
     # print current authentication display config-mode
     c_print(f"*** {task.host}: {aaa_mode} ***")
 
+    # run special AAA if in legacy mode
     if "legacy" in aaa_mode:
-    
+        # enable new-style AAA commands
         cmd = "authentication display new-style"
         task.run(
             task=netmiko_send_command,
             command_string=cmd
         )
-
-        # Manually create Netmiko connection
+        
+        # force conversion to new-style using manual Netmiko connection
         net_connect = task.host.get_connection("netmiko", task.nornir.config)
-
+        # command to force conversion
         cmd = "aaa accounting identity default start-stop group ISE"
-
         output = net_connect.config_mode()
-
+        # look for confirmation prompt
         output += net_connect.send_command(
             cmd, 
             expect_string=r"yes", 
             strip_prompt=False, 
             strip_command=False
         )
-
+        # confirm conversion
         output += net_connect.send_command(
             "yes", 
             expect_string=r"#",
@@ -169,7 +169,7 @@ def aaa_3750x_test(task):
             strip_command=False
         )
         output += net_connect.exit_config_mode()
-
+        # conversion complete
         c_print(f"*** {task.host}: authentication display new-style enabled ***")
 
 

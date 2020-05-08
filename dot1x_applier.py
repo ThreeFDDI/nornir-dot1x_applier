@@ -339,21 +339,64 @@ def render_configs(task):
     c_print(f"*** {task.host}: dot1x intf configurations rendered ***")
 
 
+
+def aaa_3750x(task):
+    """
+    Function to deal with 3750X AAA madness
+    """
+    # check current authentication display config-mode
+    cmd = "authentication display config-mode"
+    aaa_mode = task.run(
+        task=netmiko_send_command,
+        command_string=cmd
+    )
+    # strip result for printing
+    aaa_mode = aaa_mode.result.strip('\n')
+    # print current authentication display config-mode
+    c_print(f"*** {task.host}: {aaa_mode} ***")
+
+    # run special AAA if in legacy mode
+    if "legacy" in aaa_mode:
+        # enable new-style AAA commands
+        cmd = "authentication display new-style"
+        task.run(
+            task=netmiko_send_command,
+            command_string=cmd
+        )
+        
+        # force conversion to new-style using manual Netmiko connection
+        net_connect = task.host.get_connection("netmiko", task.nornir.config)
+        # command to force conversion
+        cmd = "aaa accounting identity default start-stop group ISE"
+        output = net_connect.config_mode()
+        # look for confirmation prompt
+        output += net_connect.send_command(
+            cmd, 
+            expect_string=r"yes", 
+            strip_prompt=False, 
+            strip_command=False
+        )
+        # confirm conversion
+        output += net_connect.send_command(
+            "yes", 
+            expect_string=r"#",
+            strip_prompt=False, 
+            strip_command=False
+        )
+        output += net_connect.exit_config_mode()
+        # conversion complete
+        c_print(f"*** {task.host}: authentication display new-style enabled ***")
+
+
 # apply switch configs
 def apply_configs(task):
     """
     Nornir task to apply IBNS dot1x configurations to devices
     """
 
-    #    if "3750X" in task.host['sw_model']:
-    #        # 3750X's use IBNSv2-modified
-    #            # get ip interface brief; use TextFSM
-    #        cmd = "authentication display config-mode"
-    #        task.run(
-    #            task=netmiko_send_command,
-    #            command_string=cmd
-    #        )
-    #        c_print(f"*** {task.host}: authentication display config-mode enabled ***")
+    if "3750X" in task.host['sw_model']:
+        # run 3750X function
+        aaa_3750x(task)
 
     # apply config file for each host
     task.run(task=napalm_configure, filename=f"configs/{task.host}_dot1x_global.txt")
