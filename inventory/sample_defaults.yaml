@@ -5,15 +5,23 @@ platform: ios
 connection_options:
   netmiko:
     platform: cisco_ios
+    extras:
+      optional_args:
+        session_log: netmiko_log.txt
   napalm:
     extras:
       optional_args:
-        session_log: session_log.txt
+        session_log: napalm_log.txt
         global_delay_factor: 3
         max_loops: 1000
 port: 22
 data:
+  location: CORP, Anytown, USA
   mgmt_src: Vlan999
+  snmpv2_key1: snmp123!
+  snmpv2_key2: snmp123@
+  snmpv3_view: SNMPView
+  snmpv3_hash: hasthiskey
   ise_key: c1sc0123!
   ise_vip_a_name: ISE_A
   ise_vip_a_ip: 10.10.10.10
