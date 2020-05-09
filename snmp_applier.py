@@ -233,7 +233,6 @@ def ibns_snmp(task):
     return snmp_cfg.result
 
 
-
 # render switch configs
 def render_configs(task):
     """
@@ -253,40 +252,10 @@ def apply_configs(task):
     """
     Nornir task to apply IBNS dot1x configurations to devices
     """
-
-    if "3750X" in task.host['sw_model']:
-        # run 3750X function
-        aaa_3750x(task)
-
     # apply config file for each host
-    task.run(task=napalm_configure, filename=f"configs/{task.host}_dot1x_global.txt")
+    task.run(task=napalm_configure, filename=f"configs/{task.host}_snmp.txt")
     # print completed hosts
     c_print(f"*** {task.host}: dot1x global configuration applied ***")
-    task.run(task=napalm_configure, filename=f"configs/{task.host}_dot1x_intf.txt")
-    # print completed hosts
-    c_print(f"*** {task.host}: dot1x interface configuration applied ***")
-
-
-# verify dot1x
-def verify_dot1x(task):
-    """
-    Nornir task to verify dot1x has been enabled
-    """
-    # run "show dot1x all" on each host
-    sh_dot1x = task.run(task=netmiko_send_command, command_string="show dot1x all")
-    # TTP template for dot1x status
-    dot1x_ttp_template = "Sysauthcontrol              {{ status }}"
-    # magic TTP parsing
-    parser = ttp(data=sh_dot1x.result, template=dot1x_ttp_template)
-    parser.parse()
-    dot1x_status = json.loads(parser.result(format="json")[0])
-
-    # write dot1x verification report for each host
-    with open(f"output/{task.host}_dot1x_verified.txt", "w+") as file:
-        file.write(sh_dot1x.result)
-
-    # print dot1x status
-    c_print(f"*** {task.host} dot1x status: {dot1x_status[0]['status']} ***")
 
 
 # main function

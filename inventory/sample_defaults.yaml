@@ -5,9 +5,6 @@ platform: ios
 connection_options:
   netmiko:
     platform: cisco_ios
-    extras:
-      optional_args:
-        session_log: netmiko_log.txt
   napalm:
     extras:
       optional_args:
