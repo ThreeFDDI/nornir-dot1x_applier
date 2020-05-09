@@ -5,3 +5,4 @@ hosts.yaml
 defaults.yaml
 groups.yaml
 nornir_log.txt
+napalm_log.txt

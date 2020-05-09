@@ -6,16 +6,3 @@ snmp-server view {{ snmpv3_view }} iso included
 snmp-server user SNMPOp3rator ReadGroup v3 auth sha {{ snmpv3_hash }}
 snmp-server location {{ location }}
 !
-
-
-
-
-ip access-list standard SNMP_ACCESS
-remark {{snmp_src_remark}}
-permit {{ snmp_src }}
-
-{% for intf in access_interfaces %}
-interface {{ intf.interface }}
- authentication event fail action next-method
- authentication event server dead action authorize vlan {{ intf.access_vlan }}
-{% endfor %}

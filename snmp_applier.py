@@ -244,7 +244,7 @@ def render_configs(task):
     with open(f"configs/{task.host}_snmp.txt", "w+") as file:
         file.write(snmp_cfg)
     # print completed hosts
-    c_print(f"*** {task.host}: dot1x global configuration rendered ***")
+    c_print(f"*** {task.host}: SNMP configuration rendered ***")
 
 
 # apply switch configs
@@ -255,7 +255,7 @@ def apply_configs(task):
     # apply config file for each host
     task.run(task=napalm_configure, filename=f"configs/{task.host}_snmp.txt")
     # print completed hosts
-    c_print(f"*** {task.host}: dot1x global configuration applied ***")
+    c_print(f"*** {task.host}: SNMP configuration applied ***")
 
 
 # main function
@@ -282,7 +282,7 @@ def main():
     print("~" * 80)
 
     # render switch configs
-    c_print(f"Rendering IBNS dot1x configurations")
+    c_print(f"Rendering IBNS snmp configurations")
     # run The Norn to render dot1x config
     nr.run(task=render_configs)
     # print failed hosts
@@ -290,19 +290,11 @@ def main():
     print("~" * 80)
 
     # apply switch configs
-    c_print(f"Applying IBNS dot1x configuration files to all devices")
+    c_print(f"Applying IBNS snmp configuration files to all devices")
     # prompt to proceed
     proceed()
     # run The Norn to apply config files
     nr.run(task=apply_configs)
-    # print failed hosts
-    c_print(f"Failed hosts: {nr.data.failed_hosts}")
-    print("~" * 80)
-
-    # verify dot1x configs
-    c_print(f"Verifying IBNS dot1x configuration of all devices")
-    # run The Norn to verify dot1x config
-    nr.run(task=verify_dot1x, num_workers=1)
     # print failed hosts
     c_print(f"Failed hosts: {nr.data.failed_hosts}")
     print("~" * 80)
@@ -319,3 +311,15 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+"""
+ip access-list standard SNMP_ACCESS
+remark {{snmp_src_remark}}
+permit {{ snmp_src }}
+{% for intf in access_interfaces %}
+interface {{ intf.interface }}
+ authentication event fail action next-method
+ authentication event server dead action authorize vlan {{ intf.access_vlan }}
+{% endfor %}
+"""
