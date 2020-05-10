@@ -1,8 +1,13 @@
 snmp-server community {{ snmpv2_key1 }} RO
 snmp-server community {{ snmpv2_key2 }} RO
-!
+ip access-list standard SNMP_ACCESS
+{% for section in acl %}
+ remark {{ section.remark}}
+ {% for entry in section.entries %}
+ permit {{ entry }}
+ {% endfor %}
+{% endfor %}
 snmp-server group ReadGroup v3 auth read {{ snmpv3_view }} access SNMP_Access
 snmp-server view {{ snmpv3_view }} iso included
-snmp-server user SNMPOp3rator ReadGroup v3 auth sha {{ snmpv3_hash }}
+snmp-server user {{ snmp3_user }} ReadGroup v3 auth sha {{ snmpv3_hash }}
 snmp-server location {{ location }}
-!

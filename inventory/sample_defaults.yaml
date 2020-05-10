@@ -13,10 +13,20 @@ connection_options:
         max_loops: 1000
 port: 22
 data:
+  acl:
+    - remark: SRC_1
+      entries:
+      - 101.101.101.0 0.0.0.255
+      - 101.101.111.0 0.0.0.255
+    - remark: SRC_2
+      entries:
+      - 202.202.202.0 0.0.0.255
+      - 202.202.222.0 0.0.0.255
   location: CORP, Anytown, USA
   mgmt_src: Vlan999
   snmpv2_key1: snmp123!
   snmpv2_key2: snmp123@
+  snmp3_user: SNMPOp3rator
   snmpv3_view: SNMPView
   snmpv3_hash: hasthiskey
   ise_key: c1sc0123!
