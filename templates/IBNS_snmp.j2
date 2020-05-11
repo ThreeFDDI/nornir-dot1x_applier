@@ -11,3 +11,4 @@ snmp-server group ReadGroup v3 auth read {{ snmpv3_view }} access SNMP_Access
 snmp-server view {{ snmpv3_view }} iso included
 snmp-server user {{ snmp3_user }} ReadGroup v3 auth sha {{ snmpv3_hash }}
 snmp-server location {{ location }}
+service password-encryption

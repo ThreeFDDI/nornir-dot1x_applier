@@ -250,6 +250,21 @@ def ibns_global(task):
     return global_cfg.result
 
 
+# render IBNS snmp config templates
+def ibns_snmp(task):
+    """
+    Nornir task to render global IBNS dot1x  configurations
+    """
+    snmp_cfg = task.run(
+        task=text.template_file,
+        template=f"IBNS_snmp.j2",
+        path="templates/",
+        **task.host,
+    )
+    # return configuration
+    return snmp_cfg.result
+
+
 # IBNS interface config templates
 def ibns_intf(task):
     """
@@ -323,15 +338,25 @@ def render_configs(task):
     """
     Nornir task to render IBNS dot1x  configurations
     """
-    # function to render global configs
+    
+    # run function to render global configs
     global_cfg = ibns_global(task)
-    # function to run interface configs
-    intf_cfg = ibns_intf(task)
     # write global config file for each host
     with open(f"configs/{task.host}_dot1x_global.txt", "w+") as file:
         file.write(global_cfg)
     # print completed hosts
     c_print(f"*** {task.host}: dot1x global configuration rendered ***")
+
+    # run function to render snmp configs
+    snmp_cfg = ibns_snmp(task)
+    # function to run interface configs
+    with open(f"configs/{task.host}_snmp.txt", "w+") as file:
+        file.write(snmp_cfg)
+    # print completed hosts
+    c_print(f"*** {task.host}: SNMP configuration rendered ***")
+
+    # run function to run interface configs
+    intf_cfg = ibns_intf(task)
     # write interface config file for each host
     with open(f"configs/{task.host}_dot1x_intf.txt", "w+") as file:
         file.write(intf_cfg)
@@ -339,6 +364,7 @@ def render_configs(task):
     c_print(f"*** {task.host}: dot1x intf configurations rendered ***")
 
 
+# 3750X specific AAA changes
 def aaa_3750x(task):
     """
     Function to deal with 3750X AAA madness
@@ -397,10 +423,15 @@ def apply_configs(task):
         # run 3750X function
         aaa_3750x(task)
 
-    # apply config file for each host
+    # apply global config file for each host
     task.run(task=napalm_configure, filename=f"configs/{task.host}_dot1x_global.txt")
     # print completed hosts
     c_print(f"*** {task.host}: dot1x global configuration applied ***")
+    # apply snmp config file for each host
+    task.run(task=napalm_configure, filename=f"configs/{task.host}_snmp.txt")
+    # print completed hosts
+    c_print(f"*** {task.host}: SNMP configuration applied ***")
+    # apply interface config file for each host
     task.run(task=napalm_configure, filename=f"configs/{task.host}_dot1x_intf.txt")
     # print completed hosts
     c_print(f"*** {task.host}: dot1x interface configuration applied ***")
