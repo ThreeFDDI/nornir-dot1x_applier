@@ -1,6 +1,7 @@
 ---
 switches:
   data:
+    location: CORP, Anytown, State, USA
     mgmt_src: Vlan888
     region: west
     vlans:

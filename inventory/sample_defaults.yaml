@@ -22,7 +22,6 @@ data:
       entries:
       - 202.202.202.0 0.0.0.255
       - 202.202.222.0 0.0.0.255
-  location: CORP, Anytown, USA
   mgmt_src: Vlan999
   snmpv2_key1: snmp123!
   snmpv2_key2: snmp123@
