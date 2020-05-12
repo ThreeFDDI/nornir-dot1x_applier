@@ -91,7 +91,7 @@ def kickoff():
 
     # initialize The Norn
     nr = InitNornir(
-        logging={"file": "nornir_log.txt", "level": "debug"},
+        logging={"file": f"logs/{site_}nornir_log.txt", "level": "debug"},
         inventory={
             "plugin": "nornir.plugins.inventory.simple.SimpleInventory",
             "options": {
