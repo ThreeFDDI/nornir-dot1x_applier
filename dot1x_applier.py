@@ -14,6 +14,14 @@ switch models will receive IBNS version 2.
 
 Additional required variables from Source of Truth (SimpleInventory):
 
+location:           SNMP location
+acl:                SNMP source ACL
+snmpv2_key1:        SNMPv2 community 1
+snmpv2_key2:        SNMPv2 community 2
+snmp3_user:         SNMPv3 user
+snmpv3_view:        SNMPv3 View
+snmpv3_hash:        SNMPv3 hash
+mgmt_src:           Management source interface
 ise_key:            ISE RADIUS key
 ise_vip_a_name:     ISE cluster A hostname
 ise_vip_a_ip:       ISE cluster A VIP ip address
