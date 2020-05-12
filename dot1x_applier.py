@@ -214,9 +214,9 @@ def get_info(task):
         task.host["ibns_ver"] = "v1"
         c_print(f"*** {task.host}: IBNS version 1 ***")
 
-    elif "3750X" in task.host['sw_model']:
+    elif "3750X" in task.host["sw_model"]:
         # 3750X's use IBNSv2-modified
-        task.host['ibns_ver'] = 'v2-alt'
+        task.host["ibns_ver"] = "v2-alt"
         c_print(f"*** {task.host}: IBNS version 2 (modified) ***")
 
     else:
@@ -338,7 +338,7 @@ def render_configs(task):
     """
     Nornir task to render IBNS dot1x  configurations
     """
-    
+
     # run function to render global configs
     global_cfg = ibns_global(task)
     # write global config file for each host
@@ -372,11 +372,11 @@ def aaa_3750x(task):
     # check current authentication display config-mode
     cmd = "authentication display config-mode"
     aaa_mode = task.run(
-        task=netmiko_send_command,
+        task=netmiko_send_command, 
         command_string=cmd
     )
     # strip result for printing
-    aaa_mode = aaa_mode.result.strip('\n')
+    aaa_mode = aaa_mode.result.strip("\n")
     # print current authentication display config-mode
     c_print(f"*** {task.host}: {aaa_mode} ***")
 
@@ -385,10 +385,10 @@ def aaa_3750x(task):
         # enable new-style AAA commands
         cmd = "authentication display new-style"
         task.run(
-            task=netmiko_send_command,
+            task=netmiko_send_command, 
             command_string=cmd
         )
-        
+
         # force conversion to new-style using manual Netmiko connection
         net_connect = task.host.get_connection("netmiko", task.nornir.config)
         # command to force conversion
@@ -404,7 +404,7 @@ def aaa_3750x(task):
         # confirm conversion
         output += net_connect.send_command(
             "yes", 
-            expect_string=r"#",
+            expect_string=r"#", 
             strip_prompt=False, 
             strip_command=False
         )
@@ -419,7 +419,7 @@ def apply_configs(task):
     Nornir task to apply IBNS dot1x configurations to devices
     """
 
-    if "3750X" in task.host['sw_model']:
+    if "3750X" in task.host["sw_model"]:
         # run 3750X function
         aaa_3750x(task)
 
