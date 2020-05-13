@@ -39,7 +39,6 @@ excluded_intf:      list of ports that will be excluded from dot1x
 """
 
 import json
-import site
 import sys
 from getpass import getpass
 from nornir import InitNornir
