@@ -1,5 +1,6 @@
 {% for intf in access_interfaces %}
 interface {{ intf.interface }}
+ switchport mode access
  device-tracking attach-policy IPDT_POLICY
  authentication periodic
  authentication timer reauthenticate server
