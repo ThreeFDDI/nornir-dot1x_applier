@@ -1,5 +1,6 @@
 {% for intf in access_interfaces %}
 interface {{ intf.interface }}
+ switchport mode access
  authentication periodic
  authentication timer reauthenticate server
  access-session control-direction in
