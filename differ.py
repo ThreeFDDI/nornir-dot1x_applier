@@ -69,7 +69,6 @@ def cfg_differ(task):
     """
     c_print(f"*** Diffing configs from {task.host} ***")
 
-
     # send commands to device
     run_cfg = task.run(task=netmiko_send_command, command_string="show run")
     start_cfg = task.run(task=netmiko_send_command, command_string="show start")
@@ -77,11 +76,10 @@ def cfg_differ(task):
     # extract result and split lines
     run_cfg = run_cfg.result.splitlines(1)
     start_cfg = start_cfg.result.splitlines(1)
-    
+
     # run diff on each line
     for line in difflib.unified_diff(run_cfg, start_cfg, n=5):
         print(line, end=" ")
-
 
 
 def main():
