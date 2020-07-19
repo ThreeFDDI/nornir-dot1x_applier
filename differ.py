@@ -78,7 +78,7 @@ def cfg_differ(task):
     start_cfg = start_cfg.result.splitlines(1)
 
     # run diff on each line
-    for line in difflib.unified_diff(run_cfg, start_cfg, n=5):
+    for line in difflib.unified_diff(start_cfg, run_cfg, n=5):
         print(line, end=" ")
 
 
