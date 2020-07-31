@@ -1,0 +1,5 @@
+{% for intf in l3_vlan_int %}
+interface {{ intf }}
+ ip helper-address {{ ise_vip_a_ip }}
+ ip helper-address {{ ise_vip_b_ip }}
+{% endfor %}

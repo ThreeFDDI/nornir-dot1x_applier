@@ -39,3 +39,11 @@ data:
   ise_vip_b_ip: 10.10.10.20
   ise_vip_b_psn1: 10.10.10.21
   ise_vip_b_psn2: 10.10.10.22
+  ise_vip_c_name: ISE_C
+  ise_vip_c_ip: 10.10.10.30
+  ise_vip_c_psn1: 10.10.10.31
+  ise_vip_c_psn2: 10.10.10.32
+  ise_vip_d_name: ISE_D
+  ise_vip_d_ip: 10.10.10.40
+  ise_vip_d_psn1: 10.10.10.41
+  ise_vip_d_psn2: 10.10.10.42

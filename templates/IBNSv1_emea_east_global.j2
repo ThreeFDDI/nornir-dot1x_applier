@@ -1,0 +1,38 @@
+aaa group server radius ISE
+ server {{ ise_vip_c_ip }} auth-port 1812 acct-port 1813
+ server {{ ise_vip_d_ip }} auth-port 1812 acct-port 1813
+ ip radius source-interface {{ mgmt_src }}
+radius-server key {{ ise_key }}
+aaa authentication dot1x default group ISE
+aaa authorization network default group ISE
+aaa accounting dot1x default start-stop group ISE
+aaa server radius dynamic-author
+client {{ ise_vip_c_ip }} server-key 0 {{ ise_key }}
+client {{ ise_vip_c_psn1 }} server-key 0 {{ ise_key }}
+client {{ ise_vip_c_psn2 }} server-key 0 {{ ise_key }}
+client {{ ise_vip_d_ip }} server-key 0 {{ ise_key }}
+client {{ ise_vip_d_psn1 }} server-key 0 {{ ise_key }}
+client {{ ise_vip_d_psn2 }} server-key 0 {{ ise_key }}
+ip device tracking
+ip dhcp snooping
+no ip dhcp snooping information option
+ip dhcp snooping vlan {{ vlan_list }}
+dot1x system-auth-control
+dot1x critical eapol
+ip http secure-active-session-modules none
+ip http max-connections 20
+ip http active-session-modules none
+ip http client source-interface {{ mgmt_src }}
+ip radius source-interface {{ mgmt_src }} vrf default
+radius-server attribute 6 on-for-login-auth
+radius-server attribute 6 support-multiple
+radius-server attribute 8 include-in-access-req
+radius-server attribute 25 access-request include
+radius-server dead-criteria time 5 tries 3
+radius-server deadtime 15
+radius-server vsa send accounting
+radius-server vsa send authentication
+radius-server host {{ ise_vip_c_ip }} auth-port 1812 acct-port 1813 test username SVC_RADIUS_P key 0 {{ ise_key }}
+radius-server host {{ ise_vip_d_ip }} auth-port 1812 acct-port 1813 test username SVC_RADIUS_P key 0 {{ ise_key }}
+vlan 666
+ name QUARANTINE

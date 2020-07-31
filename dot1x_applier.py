@@ -328,10 +328,16 @@ def ibns_intf(task):
 
     # save L3 vlan interfaces to task.host
     task.host["l3_vlan_int"] = l3_vlan_int
+
+    if "emea" in task.host['region']:
+        L3VLAN_template = "IBNS_EMEA_L3VLAN_intf.j2"
+    else:
+        L3VLAN_template = "IBNS_L3VLAN_intf.j2"
+
     # render L3 vlan interface configs
     l3_vlan_int_cfg = task.run(
         task=text.template_file,
-        template=f"IBNS_L3VLAN_intf.j2",
+        template=L3VLAN_template,
         path="templates/",
         **task.host,
     )
